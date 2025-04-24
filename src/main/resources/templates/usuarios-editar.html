@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fast Price - Comparação de Preços</title>
+        <link rel="stylesheet" href="/css/style2.css">
+    </head>
+    <div class="container">
+        <div th:replace="~{fragments/header :: header}"></div>
+        <div class="main-content">
+            <div th:fragment="editar(usuario)">
+                <h1 th:text="'Atualizar informações: ' + ${usuario.nome}">Atualizar Usuário</h1>
+
+                <form th:action="@{/usuarios/atualizar}" method="POST">
+                    <input type="hidden" th:field="${usuario.id}"/>
+                    <input type="hidden" th:field="${usuario.senha}"/>
+                    <input type="hidden" th:field="${usuario.acesso}"/>
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nome" name="nome" th:value="${usuario.nome}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="email" name="email" th:value="${usuario.email}" required>
+                    </div>
+                    <div th:if="${erro}">
+                        <p th:text="${erro}"></p>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</html>

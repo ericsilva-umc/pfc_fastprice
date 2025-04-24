@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fast Price - Login</title>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="logo-container">
+                <a th:href="@{/}"><img src="imgs/FASTPRICELOGO.png" alt="Fast Price Logo" class="logo"></a>
+            </div>
+
+            <div class="login-card">
+                <form th:action="@{/login}" method="POST">
+                    <h1>Entre em sua conta</h1>
+                    
+                    <input type="email" name="email" id="email" class="input-field" placeholder="Digite seu e-mail" required>
+                    <input type="password" name="senha" id="senha" class="input-field" placeholder="Digite sua senha" required>
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                    
+                    <a href="#" class="forgot-password">Esqueceu sua senha?</a>
+                    
+                    <div class="divider"></div>
+                    
+                    <p class="register-text">Ainda não possui uma conta?</p>
+                    <a th:href="@{/cadastrar}" class="btn btn-secondary">Registre-se</a>                
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

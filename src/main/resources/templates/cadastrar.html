@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fast Price - Cadastro</title>
+        <link rel="stylesheet" href="/css/style3.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="logo-container">
+                <img src="imgs/FASTPRICELOGO.png" alt="Fast Price Logo" class="logo">
+            </div>
+            <div class="register-card">
+                <form th:action="@{/cadastrar}" method="POST" oninput="repetir.setCustomValidity(repetir.value != senha.value ? 'As senhas não conferem.' : '')">
+                    <h1>Cadastre uma conta</h1>
+                    <input type="text" name="nome" id="campoNome" class="input-field" placeholder="Digite um nome para conta" required>
+                    <input type="email" name="email" id="campoEmail" class="input-field" placeholder="Digite um e-mail" required>
+                    <input type="password" name="senha" id="campoSenha" class="input-field" placeholder="Digite uma senha" required>
+                    <input type="password" name="repetir" id="campoSenhaRepetir" class="input-field" placeholder="Repita a senha">
+                    <div th:if="${erro}">
+                        <p th:text="${erro}"></p>
+                    </div>
+                    <input type="submit" name="btop" value="Cadastrar" class="btn btn-primary">
+                    <div class="divider"></div>
+                    <p class="login-text">Já possui uma conta?</p>
+                    <a th:href="@{/login}"class="btn btn-secondary">Entrar</a>                  
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Price - Comparação de Preços</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- CSS Link-->
+    <link rel="stylesheet" href="styleTeste.css">
+</head>
+<body>
+    <div class="container py-4">
+        <!-- Header -->
+        <header class="d-flex flex-wrap align-items-center justify-content-between mb-5 header-container">
+            <div class="col-md-3 mb-md-0 mb-3">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/FastPrice_PFC-uAGd78qX7NalbnyXIxz6XlETjwJnEh.png" alt="Fast Price Logo" class="logo">
+            </div>
+            
+            <div class="col-md-6 position-relative search-container">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="form-control search-input" placeholder="Pesquise por um item ou supermercado...">
+            </div>
+            
+            <div class="col-md-3 d-flex justify-content-end align-items-center user-actions">
+                <button class="btn fs-5 me-2"><i class="bi bi-cart3"></i></button>
+                <button class="btn fs-5 me-3"><i class="bi bi-list"></i></button>
+                <div class="d-flex align-items-center">
+                    <div class="profile-circle me-2">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <a href="#" class="text-decoration-none fw-bold text-dark">Sair</a>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <div class="text-center mt-5">
+            <h2 class="mb-4 text-dark">Encontrou um produto com preço legal?</h2>
+            <button class="btn btn-blue px-4 py-2 mb-5">Registre um produto!</button>
+            
+            <div class="divider"></div>
+            
+            <!-- Table -->
+            <div class="row fw-bold text-dark mb-4 d-none d-md-flex">
+                <div class="col-md-3 text-center">ESTABELECIMENTO</div>
+                <div class="col-md-3 text-center">PRODUTO</div>
+                <div class="col-md-3 text-center">PREÇO</div>
+                <div class="col-md-3 text-center"></div>
+            </div>
+            
+            <div class="row table-row py-4 align-items-center mb-3">
+                <div class="col-md-3 mb-2 mb-md-0 text-center fw-bold">VERAN</div>
+                <div class="col-md-3 mb-2 mb-md-0 text-center fw-bold">BATATA</div>
+                <div class="col-md-3 mb-2 mb-md-0 text-center fw-bold">R$ 12/kg</div>
+                <div class="col-md-3 text-center">
+                    <button class="btn btn-orange px-3 py-2" data-bs-toggle="modal" data-bs-target="#locationModal" data-store="VERAN">Ver Localização</button>
+                </div>
+            </div>
+            
+            <div class="row table-row py-4 align-items-center mb-3">
+                <div class="col-md-3 mb-2 mb-md-0 text-center fw-bold">NAGUMO</div>
+                <div class="col-md-3 mb-2 mb-md-0 text-center fw-bold">FEIJÃO</div>
+                <div class="col-md-3 mb-2 mb-md-0 text-center fw-bold">R$ 40/kg</div>
+                <div class="col-md-3 text-center">
+                    <button class="btn btn-orange px-3 py-2" data-bs-toggle="modal" data-bs-target="#locationModal" data-store="NAGUMO">Ver Localização</button>
+                </div>
+            </div>
+            
+            <div class="row table-row py-4 align-items-center mb-3">
+                <div class="col-md-3 mb-2 mb-md-0 text-center fw-bold">SHIBATA</div>
+                <div class="col-md-3 mb-2 mb-md-0 text-center fw-bold">CENOURA</div>
+                <div class="col-md-3 mb-2 mb-md-0 text-center fw-bold">R$ 20/kg</div>
+                <div class="col-md-3 text-center">
+                    <button class="btn btn-orange px-3 py-2" data-bs-toggle="modal" data-bs-target="#locationModal" data-store="SHIBATA">Ver Localização</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Localização Interativo -->
+    <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="locationModalLabel">Selecione a Localização</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group search-location-input">
+                        <input type="text" class="form-control" id="searchAddress" placeholder="Buscar endereço...">
+                        <button class="btn btn-blue" id="searchButton">Buscar</button>
+                    </div>
+                    
+                    <div class="map-container">
+                        <div class="map-instructions">
+                            <p><strong>Clique no mapa</strong> para selecionar a localização do estabelecimento.</p>
+                        </div>
+                        <div id="interactiveMap" style="height: 100%; width: 100%;"></div>
+                    </div>
+                    
+                    <div class="location-info" id="locationInfo">
+                        <p class="location-address" id="selectedAddress"></p>
+                        <p id="selectedCoordinates"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-blue" id="confirmLocation">Confirmar Localização</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Google Maps API e Interação -->
+    <script>
+        let map;
+        let marker;
+        let geocoder;
+        let currentStore = '';
+        let selectedLocation = null;
+        
+        // Inicializar o mapa interativo
+        function initMap() {
+            // Coordenadas iniciais (São Paulo)
+            const initialPosition = { lat: -23.550520, lng: -46.633308 };
+            
+            // Criar o mapa
+            map = new google.maps.Map(document.getElementById("interactiveMap"), {
+                center: initialPosition,
+                zoom: 13,
+                mapTypeControl: true,
+                streetViewControl: true,
+                fullscreenControl: true,
+            });
+            
+            // Inicializar o geocodificador
+            geocoder = new google.maps.Geocoder();
+            
+            // Adicionar evento de clique no mapa
+            map.addListener("click", (event) => {
+                placeMarker(event.latLng);
+            });
+            
+            // Configurar o botão de busca de endereço
+            document.getElementById("searchButton").addEventListener("click", () => {
+                searchAddress();
+            });
+            
+            // Permitir busca ao pressionar Enter
+            document.getElementById("searchAddress").addEventListener("keypress", (event) => {
+                if (event.key === "Enter") {
+                    searchAddress();
+                }
+            });
+            
+            // Configurar o botão de confirmação
+            document.getElementById("confirmLocation").addEventListener("click", () => {
+                if (selectedLocation) {
+                    saveLocation(currentStore, selectedLocation);
+                    
+                    // Fechar o modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('locationModal'));
+                    modal.hide();
+                    
+                    // Mostrar mensagem de sucesso
+                    alert(`Localização para ${currentStore} salva com sucesso!`);
+                }
+            });
+        }
+        
+        // Função para colocar um marcador no mapa
+        function placeMarker(location) {
+            // Remover marcador anterior se existir
+            if (marker) {
+                marker.setMap(null);
+            }
+            
+            // Criar novo marcador
+            marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                draggable: true,
+                animation: google.maps.Animation.DROP
+            });
+            
+            // Centralizar o mapa no marcador
+            map.panTo(location);
+            
+            // Obter o endereço da localização
+            geocodePosition(location);
+            
+            // Adicionar evento de arrasto finalizado
+            marker.addListener("dragend", () => {
+                geocodePosition(marker.getPosition());
+            });
+        }
+        
+        // Função para obter o endereço a partir das coordenadas
+        function geocodePosition(position) {
+            geocoder.geocode({ location: position }, (results, status) => {
+                if (status === "OK" && results[0]) {
+                    // Armazenar a localização selecionada
+                    selectedLocation = {
+                        lat: position.lat(),
+                        lng: position.lng(),
+                        address: results[0].formatted_address
+                    };
+                    
+                    // Exibir informações da localização
+                    document.getElementById("locationInfo").style.display = "block";
+                    document.getElementById("selectedAddress").textContent = results[0].formatted_address;
+                    document.getElementById("selectedCoordinates").textContent = `Latitude: ${position.lat().toFixed(6)}, Longitude: ${position.lng().toFixed(6)}`;
+                    
+                    // Habilitar o botão de confirmação
+                    document.getElementById("confirmLocation").disabled = false;
+                } else {
+                    console.error("Geocoder falhou devido a: " + status);
+                    document.getElementById("selectedAddress").textContent = "Endereço não encontrado";
+                    document.getElementById("selectedCoordinates").textContent = `Latitude: ${position.lat().toFixed(6)}, Longitude: ${position.lng().toFixed(6)}`;
+                }
+            });
+        }
+        
+        // Função para buscar um endereço
+        function searchAddress() {
+            const address = document.getElementById("searchAddress").value;
+            
+            if (address) {
+                geocoder.geocode({ address: address }, (results, status) => {
+                    if (status === "OK" && results[0]) {
+                        // Colocar marcador na localização encontrada
+                        placeMarker(results[0].geometry.location);
+                    } else {
+                        alert("Endereço não encontrado: " + status);
+                    }
+                });
+            }
+        }
+        
+        // Função para salvar a localização de um estabelecimento
+        function saveLocation(store, location) {
+            // Aqui você implementaria a lógica para salvar a localização no seu backend
+            console.log(`Salvando localização para ${store}:`, location);
+            
+            // Exemplo de como você poderia enviar para um servidor:
+            /*
+            fetch('/api/locations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    store: store,
+                    location: location
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+            */
+        }
+        
+        // Configurar o modal para capturar o estabelecimento atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const locationModal = document.getElementById('locationModal');
+            
+            locationModal.addEventListener('show.bs.modal', function(event) {
+                // Obter o botão que acionou o modal
+                const button = event.relatedTarget;
+                
+                // Extrair o nome do estabelecimento do atributo data-store
+                currentStore = button.getAttribute('data-store');
+                
+                // Atualizar o título do modal
+                const modalTitle = locationModal.querySelector('.modal-title');
+                modalTitle.textContent = `Selecione a Localização - ${currentStore}`;
+                
+                // Resetar o estado do modal
+                if (marker) {
+                    marker.setMap(null);
+                    marker = null;
+                }
+                
+                document.getElementById("locationInfo").style.display = "none";
+                document.getElementById("confirmLocation").disabled = true;
+                document.getElementById("searchAddress").value = "";
+                selectedLocation = null;
+            });
+        });
+    </script>
+    
+    <!-- Carregamento da API do Google Maps -->
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyATbza8NPkJwRZSj_BDp_eOBwLDUIyyPzM&libraries=places&callback=initMap">
+    </script>
+</body>
+</html>

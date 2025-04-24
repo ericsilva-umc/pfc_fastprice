@@ -1,0 +1,129 @@
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f2f4f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+        
+        .logo-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .logo {
+            max-width: 300px;
+        }
+        
+        .login-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        h1 {
+            color: #000000;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #d9d9d9;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #5f6060;
+        }
+        
+        .input-field::placeholder {
+            color: #9c9cab;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+        }
+        
+        .btn-primary {
+            background-color: #0073c6;
+            color: white;
+            margin: 10px 0 20px;
+        }
+        
+        .btn-secondary {
+            background-color: #ff4700;
+            color: white;
+        }
+        
+        .forgot-password {
+            text-align: center;
+            display: block;
+            color: #5f6060;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+        
+        .divider {
+            height: 1px;
+            background-color: #d9d9d9;
+            margin: 20px 0;
+        }
+        
+        .register-text {
+            text-align: center;
+            color: #5f6060;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .logo-container {
+                margin-bottom: 40px;
+            }
+            
+            .login-card {
+                max-width: 100%;
+            }
+        }
+
+
+
+
+
+ 

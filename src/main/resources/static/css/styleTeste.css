@@ -1,0 +1,147 @@
+        :root {
+            --primary-blue: #0073c6;
+            --primary-orange: #ff4700;
+            --light-blue: #7fdcf9;
+            --text-dark: #494949;
+            --text-light: #9c9cab;
+            --border-light: #d9d9d9;
+        }
+        
+        body {
+            background: linear-gradient(to bottom, var(--light-blue) 0%, var(--light-blue) 30%, #ffffff 70%);
+            min-height: 100vh;
+        }
+        
+        .search-input {
+            border-radius: 30px;
+            padding-left: 40px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+        
+        .profile-circle {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-orange);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        
+        .btn-blue {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-blue:hover {
+            background-color: #005ea3;
+            color: white;
+        }
+        
+        .btn-orange {
+            background-color: var(--primary-orange);
+            color: white;
+            border-radius: 30px;
+        }
+        
+        .btn-orange:hover {
+            background-color: #e03e00;
+            color: white;
+        }
+        
+        .table-row {
+            background-color: var(--primary-blue);
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .divider {
+            height: 1px;
+            background-color: var(--border-light);
+            margin: 2rem 0;
+        }
+        
+        .logo {
+            height: 80px;
+        }
+        
+        .map-container {
+            height: 400px;
+            width: 100%;
+            position: relative;
+        }
+        
+        .map-instructions {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 5px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            font-size: 14px;
+        }
+        
+        .modal-header {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .modal-title {
+            font-weight: bold;
+        }
+        
+        .location-info {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .location-info p {
+            margin-bottom: 5px;
+        }
+        
+        .location-address {
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+        
+        .search-location-input {
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+            }
+            
+            .search-container {
+                width: 100%;
+                margin: 1rem 0;
+            }
+            
+            .user-actions {
+                width: 100%;
+                justify-content: space-between;
+                margin-top: 1rem;
+            }
+            
+            .map-instructions {
+                max-width: 200px;
+                font-size: 12px;
+            }
+        }

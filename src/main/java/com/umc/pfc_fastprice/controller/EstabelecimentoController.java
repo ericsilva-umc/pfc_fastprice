@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/estabelecimentos")
+@RequestMapping("/api/estabelecimentos")
 public class EstabelecimentoController {
 
     @Autowired

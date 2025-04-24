@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fast Price - Comparação de Preços</title>
+        <link rel="stylesheet" href="/css/style2.css">
+    </head>
+    <div class="container">
+        <div th:replace="~{fragments/header :: header}"></div>
+        <div class="main-content">
+            <div th:fragment="content">
+                <h1>Usuários</h1>
+
+                <div class="divider"></div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Acesso</th>
+                            <th>Opções</th>
+                        </tr>                       
+                    </thead>
+                    <tbody>
+                        <tr th:each="usuario : ${usuarios}">
+                            <td th:text="${usuario.id}"></td>
+                            <td th:text="${usuario.nome}"></td>
+                            <td th:text="${usuario.email}"></td>
+                            <td th:text="${usuario.acesso}"></td>
+                            <td>
+                                <button><a th:href="@{'/usuarios/editar/' + ${usuario.id}}">Editar</a></button>
+                                <form th:action="@{'/usuarios/deletar/' + ${usuario.id}}" method="POST" onsubmit="return confirmarExcluir();">
+                                    <button type="submit">Excluir</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        function confirmarExcluir() {
+            return confirm("Tem certeza que deseja excluir este usuário?");
+        }
+    </script>
+</html>

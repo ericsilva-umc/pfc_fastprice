@@ -1,0 +1,191 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: linear-gradient(to bottom, #7fdcf9 0%, #7fdcf9 30%, #ffffff 70%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.logo {
+    height: 80px;
+}
+
+.search-container {
+    flex-grow: 1;
+    margin: 0 30px;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #757575;
+}
+
+.auth-container {
+    display: flex;
+    align-items: center;
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: #ff4700;
+    color: white;
+}
+
+.btn-blue {
+    background-color: #0073c6;
+    color: white;
+}
+
+.create-account {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+/* Main Content */
+.main-content {
+    margin-top: 80px;
+    text-align: center;
+}
+
+.main-content h2 {
+    color: #494949;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.register-price-btn {
+    display: inline-block;
+    margin-bottom: 40px;
+}
+
+/* Table */
+.divider {
+    height: 1px;
+    background-color: #d9d9d9;
+    margin: 20px 0 40px;
+}
+
+.price-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table-header {
+    display: flex;
+    border-bottom: 1px solid #d9d9d9;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.header-cell {
+    flex: 1;
+    text-align: center;
+    font-weight: bold;
+    color: #494949;
+    font-size: 18px;
+}
+
+.table-row {
+    display: flex;
+    background-color: #0073c6;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 20px;
+    color: white;
+    align-items: center;
+}
+
+.table-cell {
+    flex: 1;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.location-btn {
+    background-color: #ff4700;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+    }
+    
+    .logo {
+        margin-bottom: 20px;
+    }
+    
+    .search-container {
+        margin: 100px 0;
+        width: 100%;
+    }
+
+    .search-icon {
+        width: 20px;
+
+    }
+    
+    .auth-container {
+        margin-top: 20px;
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .table-row, .table-header {
+        flex-direction: column;
+    }
+    
+    .table-cell, .header-cell {
+        width: 100%;
+        margin: 5px 0;
+    }
+}

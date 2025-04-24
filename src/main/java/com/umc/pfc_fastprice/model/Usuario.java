@@ -11,6 +11,7 @@ public class Usuario {
     private String nome;
     private String email;
     private String senha;
+    private String acesso;
 
     //<editor-fold defaultstate="collapsed" desc="Get/Set">
     public String getId() {
@@ -43,6 +44,14 @@ public class Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getAcesso() {
+        return acesso;
+    }
+
+    public void setAcesso(String acesso) {
+        this.acesso = acesso;
     }
     //</editor-fold>
 }
