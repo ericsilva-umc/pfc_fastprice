@@ -1,0 +1,293 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: linear-gradient(to bottom, #7fdcf9 0%, #7fdcf9 30%, #ffffff 70%);
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header */
+header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.logo {
+  margin-left: 70px;
+  height: 100px;
+}
+
+.search-container {
+  width: 100%;
+  max-width: 670px;
+  margin-left: 30px;
+  position: relative;
+  flex-grow: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: 15px 15px 15px 45px;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-input:hover {
+  cursor: url("../imgs/search-icon.png"), auto;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #757575;
+}
+
+.auth-container {
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: #ff4700;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #e74200;
+  color: white;
+}
+
+.btn-blue {
+  background-color: #0073c6;
+  color: white;
+}
+
+.btn-blue:hover {
+  background-color: #0168b3;
+  color: white;
+}
+
+.create-account {
+  color: rgb(255, 255, 255);
+  text-decoration: underline;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.create-account:hover {
+  color: #ffffffc9;
+}
+
+/* Main Content */
+.main-content {
+  margin-top: 80px;
+  text-align: center;
+}
+
+.main-content h2 {
+  color: #494949;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.tooltip-inner {
+  background-color: #494949;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 0.25rem;
+}
+
+.tooltip.bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before {
+  border-top-color: #494949 !important;
+}
+
+/* Table */
+.divider {
+  height: 1px;
+  background-color: #d9d9d9;
+  margin: 20px 0 40px;
+}
+
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table-header {
+  display: flex;
+  border-bottom: 1px solid #d9d9d9;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.header-cell {
+  flex: 1;
+  text-align: center;
+  font-weight: bold;
+  color: #494949;
+  font-size: 18px;
+}
+
+.table-row {
+  display: flex;
+  background-color: #0073c6;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding: 20px;
+  color: white;
+  align-items: center;
+}
+
+.table-cell {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.location-btn {
+  background-color: #ff4700;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.location-btn:hover {
+  background-color: #e74200;
+  color: white;
+}
+
+.list-btn {
+  background-color: #6abbf5;
+  color: white;
+  border-radius: 200px;
+  cursor: pointer;
+  
+}
+
+.list-btn:hover {
+  background-color: #4fa9e9;
+  color: white;
+  border-radius: 200px;
+  cursor: pointer;
+}
+
+.list-btn:disabled{
+  background-color: #4f53575e;
+}
+
+.fa-thumbs-up{
+  color: #15ce68;
+}
+
+.fa-thumbs-down{
+  color: #ad0707;
+}
+
+.up-count{
+  color: #15ce68;
+}
+
+.down-count{
+  color: #ad0707;
+}
+
+.rating-price {
+  display: flex; 
+  gap: 10px;
+  margin-left: 30px;
+}
+
+.rating-item {
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+}
+
+.fa-thumbs-up,
+.fa-thumbs-down {
+  margin-bottom: 5px; 
+}
+
+.up-count,
+.down-count {
+  font-size: 15px; 
+  font-weight: bold;
+}
+
+.list-item-wrapper {
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+  }
+
+  .logo {
+    margin-bottom: 20px;
+  }
+
+  .search-container {
+    flex-grow: 1;
+    margin: 0 30px;
+    position: relative;
+  }
+
+  .search-icon {
+    width: 20px;
+  }
+
+  .auth-container {
+    margin-top: 20px;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .table-row,
+  .table-header {
+    flex-direction: column;
+  }
+
+  .table-cell,
+  .header-cell {
+    width: 100%;
+    margin: 5px 0;
+  }
+}

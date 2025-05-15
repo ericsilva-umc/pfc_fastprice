@@ -4,12 +4,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
-@Document(collection = "listas")
+@Document(collection = "listadecompra")
 public class ListaDeCompra {
 
     @Id
     private String id;
-    private Usuario usuario;
+    private String usuarioId;
     private List<String> itens;
 
     //<editor-fold defaultstate="collapsed" desc="Get/Set">
@@ -21,12 +21,12 @@ public class ListaDeCompra {
         this.id = id;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public String getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setUsuarioId(String usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
     public List<String> getItens() {

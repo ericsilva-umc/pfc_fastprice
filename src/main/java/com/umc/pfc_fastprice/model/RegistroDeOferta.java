@@ -1,22 +1,24 @@
 package com.umc.pfc_fastprice.model;
 
+import java.text.NumberFormat;
+import java.util.Locale;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "registros")
+@Document(collection = "registrodeoferta")
 public class RegistroDeOferta {
 
     @Id
     private String id;
-    private Usuario usuario;
-    private Estabelecimento estabelecimento;
+    private String usuarioId;
+    private String estabelecimentoId;
     private String produto;
     private double oferta;
+    private String unidade;
     private String localizacao;
+    private String positivo;
+    private String negativo;
 
-    public void registrarOferta() {
-    }
-    
     //<editor-fold defaultstate="collapsed" desc="Get/Set">
     public String getId() {
         return id;
@@ -26,20 +28,20 @@ public class RegistroDeOferta {
         this.id = id;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public String getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setUsuarioId(String usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
-    public Estabelecimento getEstabelecimento() {
-        return estabelecimento;
+    public String getEstabelecimentoId() {
+        return estabelecimentoId;
     }
 
-    public void setEstabelecimento(Estabelecimento estabelecimento) {
-        this.estabelecimento = estabelecimento;
+    public void setEstabelecimentoId(String estabelecimentoId) {
+        this.estabelecimentoId = estabelecimentoId;
     }
 
     public String getProduto() {
@@ -50,12 +52,25 @@ public class RegistroDeOferta {
         this.produto = produto;
     }
 
-    public double getOferta() {
+    public String getOferta() {
+        Locale ptBr = Locale.of("pt", "BR");
+        return NumberFormat.getCurrencyInstance(ptBr).format(oferta);
+    }
+
+    public double getOfertaDouble() {
         return oferta;
     }
 
     public void setOferta(double oferta) {
         this.oferta = oferta;
+    }
+
+    public String getUnidade() {
+        return unidade;
+    }
+
+    public void setUnidade(String unidade) {
+        this.unidade = unidade;
     }
 
     public String getLocalizacao() {
@@ -64,6 +79,22 @@ public class RegistroDeOferta {
 
     public void setLocalizacao(String localizacao) {
         this.localizacao = localizacao;
+    }
+
+    public String getPositivo() {
+        return positivo;
+    }
+
+    public void setPositivo(String positivo) {
+        this.positivo = positivo;
+    }
+
+    public String getNegativo() {
+        return negativo;
+    }
+
+    public void setNegativo(String negativo) {
+        this.negativo = negativo;
     }
     //</editor-fold>
 }

@@ -3,7 +3,6 @@ package com.umc.pfc_fastprice.service;
 import com.umc.pfc_fastprice.model.Usuario;
 import com.umc.pfc_fastprice.repository.UsuarioRepository;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,12 +18,12 @@ public class UsuarioService {
 
     // Método da service para buscar o usuário no repository
     public Usuario buscarUsuario(String id) {
-        return usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado. ID: " + id));
+        return usuarioRepository.findById(id).orElse(null);
     }
     
     // Método da service para buscar um usuário no repository pelo e-mail
-    public Optional buscarEmail(String email) {
-        return usuarioRepository.findByEmail(email);
+    public Usuario buscarEmail(String email) {
+        return usuarioRepository.findByEmail(email).orElse(null);
     }
     
     // Método da service que utiliza o repository para o cadastro de usuário

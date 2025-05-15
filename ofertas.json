@@ -1,0 +1,98 @@
+[{
+  "_id": {
+    "$oid": "6820cec7a0dd1bbfb9bb4c76"
+  },
+  "usuarioId": "6820c5905682e35dafd4b6b1",
+  "estabelecimentoId": "6820ce6da0dd1bbfb9bb4c74",
+  "produto": "Feijão Carioca Namorado",
+  "oferta": 6.4,
+  "unidade": "kg",
+  "localizacao": "-23.52275568262954,-46.20746612548828",
+  "positivo": "0",
+  "negativo": "0",
+  "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
+},
+{
+  "_id": {
+    "$oid": "6820cf11a0dd1bbfb9bb4c77"
+  },
+  "usuarioId": "6820c5905682e35dafd4b6b1",
+  "estabelecimentoId": "6820ce4ea0dd1bbfb9bb4c71",
+  "produto": "Queijo Mussarela",
+  "oferta": 11.8,
+  "unidade": "kg",
+  "localizacao": "-23.552421596349273,-46.22403144836426",
+  "positivo": "0",
+  "negativo": "0",
+  "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
+},
+{
+  "_id": {
+    "$oid": "6820cf3aa0dd1bbfb9bb4c78"
+  },
+  "usuarioId": "6820c5905682e35dafd4b6b1",
+  "estabelecimentoId": "6820ce62a0dd1bbfb9bb4c73",
+  "produto": "Laranja Pera",
+  "oferta": 6.9,
+  "unidade": "kg",
+  "localizacao": "-23.54345170749638,-46.21124267578125",
+  "positivo": "0",
+  "negativo": "0",
+  "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
+},
+{
+  "_id": {
+    "$oid": "6820cf74a0dd1bbfb9bb4c79"
+  },
+  "usuarioId": "6820c5905682e35dafd4b6b1",
+  "estabelecimentoId": "6820ce27a0dd1bbfb9bb4c6d",
+  "produto": "Banana Prata",
+  "oferta": 8.1,
+  "unidade": "kg",
+  "localizacao": "-23.543294335563015,-46.18429183959961",
+  "positivo": "0",
+  "negativo": "0",
+  "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
+},
+{
+  "_id": {
+    "$oid": "6820cfcca0dd1bbfb9bb4c7a"
+  },
+  "usuarioId": "6820c5905682e35dafd4b6b1",
+  "estabelecimentoId": "6820ce6da0dd1bbfb9bb4c74",
+  "produto": "Arroz Solito Tipo 1",
+  "oferta": 5,
+  "unidade": "kg",
+  "localizacao": "-23.52275568262954,-46.20746612548828",
+  "positivo": "0",
+  "negativo": "0",
+  "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
+},
+{
+  "_id": {
+    "$oid": "6820d045a0dd1bbfb9bb4c7b"
+  },
+  "usuarioId": "6820c5905682e35dafd4b6b1",
+  "estabelecimentoId": "6820ce74a0dd1bbfb9bb4c75",
+  "produto": "Azeitona Verde - Sem Caroço",
+  "oferta": 7.1,
+  "unidade": "g",
+  "localizacao": "-23.556119530236195,-46.21819496154785",
+  "positivo": "0",
+  "negativo": "0",
+  "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
+},
+{
+  "_id": {
+    "$oid": "6820d0a3a0dd1bbfb9bb4c7c"
+  },
+  "usuarioId": "6820c5905682e35dafd4b6b1",
+  "estabelecimentoId": "6820ce4ea0dd1bbfb9bb4c71",
+  "produto": "Pão Francês",
+  "oferta": 24.9,
+  "unidade": "kg",
+  "localizacao": "-23.552421596349273,-46.22403144836426",
+  "positivo": "0",
+  "negativo": "0",
+  "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
+}]

@@ -1,0 +1,266 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background: linear-gradient(to bottom, #7fdcf9 0%, #7fdcf9 30%, #ffffff 70%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.logo {
+    margin-left: 70px;
+    height: 100px;
+}
+
+.search-container {
+    width: 100%;
+    max-width: 670px;
+    margin-left: 30px;
+    position: relative;
+    flex-grow: 1;
+}
+
+.search-input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #757575;
+}
+
+.icons {
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.cart-icon {
+    color: #ff5722;
+    cursor: pointer;
+}
+
+.cart-icon:hover {
+    color: #0168b3;
+    cursor: pointer;
+}
+
+.user-circle {
+    background-color: #ff5722;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    border: none;
+}
+
+.user-circle:hover {
+    background-color: #0168b3;
+    color: white;
+}
+
+.user-dropdown {
+    background-color: #0168b3;
+    border: none;
+    min-width: 50px;
+    padding: 0;
+    margin-top: 0;
+    transform: translateY(-5px);
+}
+
+.user-circle:active,
+.user-circle.show {
+    background-color: #0168b3;
+    color: white;
+    border: none;
+    box-shadow: none;
+}
+
+.user-dropdown .dropdown-item {
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+.user-dropdown .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.tooltip-inner {
+    background-color: #ff5722;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 0.25rem;
+}
+
+.tooltip.bs-tooltip-auto[data-popper-placement^="right"] .tooltip-arrow::before,
+.tooltip.bs-tooltip-right .tooltip-arrow::before {
+    border-right-color: #ff5722 !important;
+}
+
+/* User Profile Card */
+
+.profile-card {
+    background-color: #0275d8;
+    border-radius: 15px;
+    padding: 30px;
+    color: white;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar {
+    background-color: #7dd3f0;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+}
+
+.profile-avatar i {
+    font-size: 60px;
+    color: #0275d8;
+}
+
+.logout-link {
+    color: white;
+    font-weight: 500;
+}
+
+.logout-link:hover {
+    color: rgb(236, 236, 236);
+}
+
+.info-section {
+    background-color: #0267c1;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.info-item {
+    margin-bottom: 15px;
+}
+
+.info-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.edit-icon {
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    display: block;
+}
+
+.btn-edit {
+    background-color: #ff4700;
+    color: white;
+    margin-top: 10px; 
+    align-items: center;
+}
+
+.btn-edit:hover {
+    background-color: #e74200;
+    color: white;
+}
+
+.btn-cancel {
+    background-color: #657f95;
+    color: white;
+    margin-left: 10px;
+    margin-right: 10px;
+    align-items: center;
+}
+
+.btn-cancel:hover {
+    background-color: #56636f;
+    color: white;
+}
+
+.btn-save {
+    background-color: #49db79;
+    color: white;
+    margin-left: 10px;
+    margin-right: 10px;
+    align-items: center;
+}
+
+.btn-save:hover {
+    background-color: #38a877;
+    color: white;
+}
+
+.disabled-edit {
+    width: 100%;
+    color: white;
+    background-color: #0267c1;
+    padding: 10px;
+    border-style: groove;
+    border-radius: 5px;
+    border-color: #0267c1;
+}
+
+.enabled-edit {
+    width: 100%;
+    color: black;
+    background-color: white;
+    padding: 10px;
+    border-style: groove;
+    border-radius: 5px;
+    border-color: #0267c1;
+}
+
+/* Mensagem de erro  */
+.error {
+  text-align: center;
+  color: crimson;
+  font-size: 14px;
+  margin-bottom: 16px;
+}

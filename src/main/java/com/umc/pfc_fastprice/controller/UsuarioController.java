@@ -1,75 +1,103 @@
 package com.umc.pfc_fastprice.controller;
 
 import com.umc.pfc_fastprice.model.Usuario;
-import com.umc.pfc_fastprice.repository.UsuarioRepository;
+import com.umc.pfc_fastprice.service.AutenticarUsuarioService;
 import com.umc.pfc_fastprice.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@RestController
-@RequestMapping("/api/usuarios")
+@Controller
 public class UsuarioController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    UsuarioService usuarioService;
 
     @Autowired
-    private UsuarioService usuarioService;
+    AutenticarUsuarioService autenticarUsuarioService;
 
-    @PostMapping
-    public Usuario criarUsuario(@RequestBody Usuario usuario) {
-        return usuarioService.criarUsuario(usuario);
-    }
-
-    @GetMapping
-    public List<Usuario> listarUsuarios() {
-        return usuarioService.listarUsuarios();
-    }
-
-    @PutMapping("/{id}")
-    public String atualizarUsuario(@PathVariable String id, @RequestBody Usuario usuario) {
-        Optional<Usuario> usuarioBusca = usuarioRepository.findById(id);
-
-        if (usuarioBusca.isPresent()) {
-            Usuario usuarioEncontrado = usuarioBusca.get();
-
-            usuario.setId(usuarioEncontrado.getId());
-            usuario.setSenha(usuarioEncontrado.getSenha());
-
-            usuarioRepository.save(usuario);
-
-            return "Usuário atualizado com sucesso.";
+    // Método para criar o registro de um novo usuário
+    @PostMapping("/usuario/cadastrar")
+    public String cadastrarUsuario(@ModelAttribute Usuario usuario, Model model) {
+        if (usuarioService.buscarEmail(usuario.getEmail()) != null) {
+            model.addAttribute("erro", "O e-mail já está em uso!");
+            return "cadastrar";
         }
 
-        return "Usuário não existe.";
+        usuario.setAcesso("USER");
+        usuarioService.criarUsuario(usuario);
+        return "redirect:/login";
     }
 
-    @GetMapping("/verificar-senha")
-    public Boolean verificarSenha(@RequestParam String email, @RequestParam String senha) {
-        Optional<Usuario> usuarioBusca = usuarioRepository.findByEmail(email);
+    // Método para atualizar o registro do usuário editado
+    @PostMapping("/usuario/atualizar")
+    public String atualizarUsuario(@ModelAttribute Usuario usuario, Model model) {
+        Usuario usuarioBusca = usuarioService.buscarEmail(usuario.getEmail());
 
-        if (usuarioBusca.isPresent()) {
-            Usuario usuarioEncontrado = usuarioBusca.get();
-            //return BCrypt.checkpw(senha, usuarioEncontrado.getSenha());
+        if (usuarioBusca != null && !usuarioBusca.getId().equals(usuario.getId())) { // Confirma se o e-mail informado é diferente do anterior e se já está sendo usado
+            model.addAttribute("erro", "O e-mail já está em uso!");
+            model.addAttribute("modoEdicao", true);
+            model.addAttribute("usuario", usuario);
+            return "configuracoes";
         }
 
-        return false;
+        usuarioService.atualizarUsuario(usuario); // Atualiza o registro do usuário após a edição
+
+        // Atualiza o e-mail do usuário no contexto de sessão do Spring Security
+        UserDetails userDetails = autenticarUsuarioService.loadUserByUsername(usuario.getEmail());
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        return "redirect:/configurar"; // Redireciona novamente à pagina de configurações do usuário
     }
 
-    @GetMapping("/{id}")
-    public Usuario buscarUsuario(@PathVariable String id) {
-        return usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado. ID: " + id));
-    }
+    // Método ADMIN para atualizar o registro de um usuário
+    @PostMapping("/admin/usuario/atualizar")
+    public String adminAtualizarUsuario(@ModelAttribute Usuario usuario, RedirectAttributes atributos) {
+        Usuario usuarioLogado = usuarioService.buscarEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Usuario usuarioBusca = usuarioService.buscarEmail(usuario.getEmail());
 
-    @DeleteMapping("/{id}")
-    public String deletarUsuario(@PathVariable String id) {
-        if (usuarioRepository.existsById(id)) {
-            usuarioRepository.deleteById(id);
-            return "Usuário removido com sucesso.";
-        } else {
-            return "Usuário não encontrado.";
+        if (usuarioBusca != null && !usuarioBusca.getId().equals(usuario.getId())) { // Confirma se o e-mail informado é diferente do anterior e se já está sendo usado
+            atributos.addFlashAttribute("mostrarAlerta", true);
+            atributos.addFlashAttribute("mensagemAlerta", "Processo não realizado.\n\nO e-mail já está em uso.");
+            return "redirect:/admin";
         }
+
+        usuarioService.atualizarUsuario(usuario); // Atualiza o registro do usuário após a edição
+        
+        // Se o e-mail alterado for do usuário logado, atualiza a sessão do Spring Security
+        if (usuario.getId().equals(usuarioLogado.getId())) {
+            UserDetails userDetails = autenticarUsuarioService.loadUserByUsername(usuario.getEmail());
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        }
+        
+        atributos.addFlashAttribute("mostrarAlerta", true);
+        atributos.addFlashAttribute("mensagemAlerta", "Processo realizado.");
+        return "redirect:/admin"; // Redireciona ao painel de administrador
+    }
+
+    // Método ADMIN para deletar o registro de um usuário
+    @PostMapping("/admin/usuario/deletar/{id}")
+    public String adminDeletarUsuario(@PathVariable String id, RedirectAttributes atributos) {
+        Usuario usuarioLogado = usuarioService.buscarEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Usuario usuarioBusca = usuarioService.buscarUsuario(id);
+
+        if (usuarioLogado.getId().equals(usuarioBusca.getId())) {
+            atributos.addFlashAttribute("mostrarAlerta", true);
+            atributos.addFlashAttribute("mensagemAlerta", "Processo não realizado.\n\nVocê não pode excluir o seu próprio usuário.");
+            return "redirect:/admin";
+        }
+        
+        usuarioService.deletarUsuario(id); // Delete o registro do usuário de id específico
+        
+        atributos.addFlashAttribute("mostrarAlerta", true);
+        atributos.addFlashAttribute("mensagemAlerta", "Processo realizado.");
+        return "redirect:/admin";
     }
 }

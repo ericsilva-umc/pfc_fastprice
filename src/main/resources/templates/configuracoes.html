@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>FastPrice - Perfil do Usuário</title>
+        <link rel="icon" type="image/png" href="/imgs/cart.png">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="stylesheet" href="/css/style_config.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <!--Inclui o header da página-->
+            <header th:replace="~{fragments/header :: header}"></header>
+
+            <!-- Profile Card -->
+            <div class="profile-card mt-5">
+                <!-- Profile Header -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <div class="profile-avatar">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <h2 class="mb-0 fw-bold" th:text="${usuario.getNome()}"></h2>
+                    </div>
+                    <a th:href="@{/logout}" class="logout-link">Sair</a>
+                </div>
+
+                <!-- Profile Info -->
+                <div class="info-section">
+                    <!--Seção para a EXIBIÇÃO dos dados pessoais-->
+                    <div id="exibir">
+                        <form>
+                            <div class="info-item">
+                                <div class="info-label">E-mail</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <input type="text" th:value="${usuario.getEmail()}" disabled class="disabled-edit">
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-label">Senha</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <input type="text" value="**********" disabled class="disabled-edit">
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-label">Nome da Conta</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <input type="text" th:value="${usuario.getNome()}" disabled class="disabled-edit">
+                                </div>
+                            </div>
+                        </form>
+                        <button type="button" class="btn btn-edit" onclick="habilitarEdicao()">Editar Informações</button>  
+                    </div>
+
+                    <!--Seção para a EDIÇÃO dos dados pessoais, exceto senha-->
+                    <div id="editar" style="display: none">
+                        <form action="/usuario/atualizar" method="POST">
+                            <input type="hidden" name="id" th:value="${usuario.getId()}"/>
+                            <input type="hidden" name="senha" th:value="${usuario.getSenha()}"/>
+                            <input type="hidden" name="acesso" th:value="${usuario.getAcesso()}"/>
+
+                            <div class="info-item">
+                                <div class="info-label">E-mail</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <input type="text" id="email" name="email" th:value="${usuario.getEmail()}" required class="enabled-edit">
+                                </div>
+                            </div>
+
+                            <!--Exibe uma mensagem quando o e-mail informado já está cadastrado-->
+                            <div th:if="${erro}" class="error">
+                                <p th:text="${erro}"></p>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-label">Senha</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <input type="text" value="**********" disabled class="disabled-edit">
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-label">Nome da Conta</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <input type="text" id="nome" name="nome" th:value="${usuario.getNome()}" required class="enabled-edit">
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button type="button" class="btn btn-cancel" onclick="window.location.href = '/configurar'">Cancelar</button>
+                                <button type="submit" class="btn btn-save">Salvar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Habilita a edição dos dados-->
+        <script>
+            function habilitarEdicao() {
+                document.getElementById('exibir').style.display = 'none';
+                document.getElementById('editar').style.display = 'block';
+            }
+        </script>
+
+        <!--Altera para o modo de edição automaticamente ao ser redirecionado com a variável "modoEdicao" sendo true-->
+        <script th:if="${modoEdicao}">
+            window.addEventListener("DOMContentLoaded", function () {
+                habilitarEdicao();
+            });
+        </script>
+    </body>
+</html>

@@ -21,7 +21,8 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth // Configura os endereços que podem ser acessados sem autenticação
-                .requestMatchers("/", "/login", "/cadastrar", "/css/**", "/imgs/**").permitAll()
+                .requestMatchers("/", "/login", "/redefinir", "/cadastrar", "/usuario/cadastrar", "/css/**", "/imgs/**", "/js/**").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated() // Os demais endereços requerem autenticação
             )
             .formLogin(form -> form // Configura o comportamento do formulário de login

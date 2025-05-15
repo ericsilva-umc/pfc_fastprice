@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>FastPrice - Cadastro de Oferta</title>
+        <link rel="icon" type="image/png" href="imgs/cart.png">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/style_register_product.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <!--Inclui o header da página-->
+            <header th:replace="~{fragments/header :: header}"></header>
+
+            <!-- Main Content -->
+            <main class="container">
+                <div class="register-card mt-5">
+                    <h1 class="text-center mb-4">Cadastre as informações do produto</h1>
+                    <div class="row justify-content-center">
+                        <form id="productForm" th:action="@{/registrodeoferta/cadastrar}" method="POST">
+                            <!-- Establishment Name -->
+                            <!-- Dropdown personalizado para estabelecimentos -->
+                            <div class="dropdown mb-3">
+                                <button class="establishment-dropdown dropdown-toggle" type="button"
+                                        id="establishmentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span id="selectedEstablishment">Selecione um estabelecimento</span>
+                                </button>
+
+                                <ul class="dropdown-menu w-100 custom-scroll" aria-labelledby="establishmentDropdown">
+                                    <li th:each="estabelecimento : ${estabelecimentos}">
+                                        <a class="dropdown-item market"
+                                           th:attr="data-value=${estabelecimento.id}"
+                                           th:text="${estabelecimento.nome}"></a>
+                                    </li>
+                                </ul>
+
+                                <!-- Enviar informação -->
+                                <input type="hidden" 
+                                       class="form-control custom-input" 
+                                       name="estabelecimentoId" 
+                                       id="estabelecimentoId" 
+                                       required>
+                            </div>
+                            <!-- <div class="mb-3">
+                                <select class="form-control custom-input" name="estabelecimentoId" required>
+                                    <option value="" selected disabled>Selecione o estabelecimento</option>
+                                    <option th:each="estabelecimento : ${estabelecimentos}" th:value="${estabelecimento.getId()}"
+                                            th:text="${estabelecimento.getNome()}"></option>
+                                </select>
+                            </div>-->
+                            <!-- Product Name -->
+                            <div class="mb-3">
+                                <input type="text" class="form-control custom-input" name="produto" placeholder="Digite o nome do produto" required>
+                            </div>
+                            <!-- Price -->
+                            <div class="mb-3 custom-input-group input-group">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">R$</span>
+                                    <input type="number" step="0.10" class="form-control custom-input" name="oferta" placeholder="Digite o preço do produto" required>
+                                </div>
+                            </div>
+                            <!-- Measure -->
+                            <div class="mb-4">
+                                <select class="form-select custom-input" name="unidade" required>
+                                    <option value="" selected disabled>Selecione a unidade de medida do produto</option>
+                                    <option value="kg">Quilograma (kg)</option>
+                                    <option value="g">Grama (g)</option>
+                                    <option value="l">Litro (l)</option>
+                                    <option value="ml">Mililitro (ml)</option>
+                                    <option value="un">Unidade (un)</option>
+                                </select>
+                            </div>
+                            <!-- Map Location -->
+                            <div class="text-center mb-4">
+                                <p class="text-secondary mb-2">Localize o estabelecimento abaixo</p>
+                                <input id="locationValue" name="localizacao" value="" hidden>
+                                <button type="button" class="btn btn-location" data-bs-toggle="modal" data-bs-target="#locationModal" data-store="local">
+                                    Selecione a localização
+                                </button>
+                            </div>
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary submit-btn w-100 ">Cadastrar produto</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+        </div>
+    </main>
+
+    <!-- Modal Map -->
+    <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="locationModalLabel">
+                        Selecione a Localização
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group search-location-input">
+                        <input type="text" class="form-control" id="searchAddress" placeholder="Buscar endereço..." />
+                        <button class="btn btn-orange" id="searchButton">Buscar</button>
+                    </div>
+
+                    <div class="map-container">
+                        <div class="map-instructions">
+                            <p><strong>Clique no mapa</strong> para selecionar a localização do estabelecimento.</p>
+                        </div>
+                        <div id="interactiveMap" style="height: 100%; width: 100%"></div>
+                    </div>
+
+                    <div class="location-info" id="locationInfo">
+                        <p class="location-address" id="selectedAddress"></p>
+                        <p id="selectedCoordinates"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-blue" id="confirmLocation" disabled>
+                        Confirmar Localização
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Maps API e Interação -->
+    <script>
+        let map;
+        let marker;
+        let geocoder;
+        let currentStore = "";
+        let selectedLocation = null;
+
+        function initMap() {
+            // Mogi coordinates
+            const initialPosition = {
+                lat: -23.52101382391231,
+                lng: -46.18664250954003
+            };
+
+            map = new google.maps.Map(document.getElementById("interactiveMap"), {
+                center: initialPosition,
+                zoom: 13,
+                mapTypeControl: true,
+                streetViewControl: true,
+                fullscreenControl: true
+            });
+
+            // Geocode 
+            geocoder = new google.maps.Geocoder();
+
+            // Click Event 
+            map.addListener("click", (event) => {
+                placeMarker(event.latLng);
+            });
+
+            // Search Address
+            document
+                    .getElementById("searchButton")
+                    .addEventListener("click", () => {
+                        searchAddress();
+                    });
+
+            // EnterKey Search
+            document
+                    .getElementById("searchAddress")
+                    .addEventListener("keypress", (event) => {
+                        if (event.key === "Enter") {
+                            searchAddress();
+                        }
+                    });
+
+            // Confirm Address
+            document
+                    .getElementById("confirmLocation")
+                    .addEventListener("click", () => {
+                        if (selectedLocation) {
+                            saveLocation(currentStore, selectedLocation);
+                            console.log(selectedLocation.lat + "," + selectedLocation.lng);
+
+                            // Fechar o modal
+                            const modal = bootstrap.Modal.getInstance(
+                                    document.getElementById("locationModal")
+                                    );
+                            modal.hide();
+
+                            // Mostrar mensagem de sucesso
+                            alert(`Localização para ${currentStore} salva com sucesso!`);
+                        }
+                    });
+        }
+
+        // PlaceMarker
+        function placeMarker(location) {
+            // Remove old marker
+            if (marker) {
+                marker.setMap(null);
+            }
+
+            // Create new marker
+            marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                draggable: true,
+                animation: google.maps.Animation.DROP
+            });
+
+            // Center on marker
+            map.panTo(location);
+
+            // Get Addres w/ geocode
+            geocodePosition(location);
+
+            // Move marker and get final address
+            marker.addListener("dragend", () => {
+                geocodePosition(marker.getPosition());
+            });
+        }
+
+        // Get addres from coordinates
+        function geocodePosition(position) {
+            geocoder.geocode({
+                location: position
+            }, (results, status) => {
+                if (status === "OK" && results[0]) {
+                    // Store location
+                    selectedLocation = {
+                        lat: position.lat(),
+                        lng: position.lng(),
+                        address: results[0].formatted_address
+                    };
+
+                    // Show location
+                    document.getElementById("locationInfo").style.display = "block";
+                    document.getElementById("selectedAddress").textContent =
+                            results[0].formatted_address;
+                    document.getElementById(
+                            "selectedCoordinates"
+                            ).textContent = `Latitude: ${position
+                            .lat()
+                            .toFixed(6)}, Longitude: ${position.lng().toFixed(6)}`;
+
+                    // ConfirmButton
+                    document.getElementById("confirmLocation").disabled = false;
+                } else {
+                    console.error("Geocoder falhou devido a: " + status);
+                    document.getElementById("selectedAddress").textContent =
+                            "Endereço não encontrado";
+                    document.getElementById(
+                            "selectedCoordinates"
+                            ).textContent = `Latitude: ${position
+                            .lat()
+                            .toFixed(6)}, Longitude: ${position.lng().toFixed(6)}`;
+                }
+            });
+        }
+
+        // Search w/ button
+        function searchAddress() {
+            const address = document.getElementById("searchAddress").value;
+
+            if (address) {
+                geocoder.geocode({
+                    address: address
+                }, (results, status) => {
+                    if (status === "OK" && results[0]) {
+                        // Colocar marcador na localização encontrada
+                        placeMarker(results[0].geometry.location);
+                    } else {
+                        alert("Endereço não encontrado: " + status);
+                    }
+                });
+            }
+        }
+
+        // Establishment Dropdown Functionality
+        const dropdownItems = document.querySelectorAll('.market');
+        const selectedEstablishment = document.getElementById('selectedEstablishment');
+        const estabelecimentoIdInput = document.getElementById('estabelecimentoId');
+
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', function (e) {
+                e.preventDefault();
+                const value = this.dataset.value;
+                const text = this.textContent;
+
+                selectedEstablishment.textContent = text;
+                selectedEstablishment.style.color = '#000';
+
+                // 🔥 Esta linha é essencial para o valor ser enviado ao backend:
+                estabelecimentoIdInput.value = value;
+            });
+        });
+
+        // Save location
+        function saveLocation(store, location) {
+            document.getElementById("locationValue").value = location.lat + "," + location.lng;
+
+            /*
+             fetch('/api/locations', {
+             method: 'POST',
+             headers: {
+             'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({
+             store: store,
+             location: location
+             }),
+             })
+             .then(response => response.json())
+             .then(data => {
+             console.log('Success:', data);
+             })
+             .catch((error) => {
+             console.error('Error:', error);
+             });
+             */
+        }
+    </script>
+    <script async defer th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${apiGoogleMaps} + '&libraries=places&callback=initMap'}"></script>
+</body>
+
+</html>

@@ -1,25 +1,80 @@
 package com.umc.pfc_fastprice.controller;
 
+import com.umc.pfc_fastprice.dto.RegistroDeOfertaDTO;
+import com.umc.pfc_fastprice.model.Avaliacao;
+import com.umc.pfc_fastprice.model.Endereco;
+import com.umc.pfc_fastprice.model.Estabelecimento;
+import com.umc.pfc_fastprice.model.ListaDeCompra;
+import com.umc.pfc_fastprice.model.RegistroDeOferta;
+import com.umc.pfc_fastprice.model.Sugestao;
 import com.umc.pfc_fastprice.model.Usuario;
+import com.umc.pfc_fastprice.service.AvaliacaoService;
+import com.umc.pfc_fastprice.service.EnderecoService;
+import com.umc.pfc_fastprice.service.EstabelecimentoService;
+import com.umc.pfc_fastprice.service.ListaDeCompraService;
+import com.umc.pfc_fastprice.service.RegistroDeOfertaService;
+import com.umc.pfc_fastprice.service.SugestaoService;
 import com.umc.pfc_fastprice.service.UsuarioService;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class PaginasController {
 
     @Autowired
+    RegistroDeOfertaService ofertasService;
+
+    @Autowired
+    EstabelecimentoService estabelecimentoService;
+
+    @Autowired
     UsuarioService usuarioService;
 
-    // Método para redirecionar à página para login
-    @GetMapping("/login")
-    public String login() {
-        return "login";
+    @Autowired
+    EnderecoService enderecoService;
+
+    @Autowired
+    ListaDeCompraService listaDeCompraService;
+
+    @Autowired
+    RegistroDeOfertaService registroDeOfertaService;
+
+    @Autowired
+    AvaliacaoService avaliacaoService;
+    
+    @Autowired
+    SugestaoService sugestaoService;
+
+    @Value("${google.maps.api.key}")
+    private String apiGoogleMaps;
+
+    // Método para configurar a página inicial
+    @GetMapping("/")
+    public String home(Model model) {
+        List<RegistroDeOferta> ofertas = ofertasService.listarOfertas(); // Busca as ofertas cadastradas no banco de dados
+        List<RegistroDeOfertaDTO> ofertasDTO = new ArrayList<>(); // Inicializa uma lista de DTO
+
+        for (RegistroDeOferta oferta : ofertas) { // Percorre pelas ofertas cadastradas no banco de dados
+            Usuario usuario = usuarioService.buscarUsuario(oferta.getUsuarioId()); // Busca o usuário pelo ID salvo na oferta
+            Estabelecimento estabelecimento = estabelecimentoService.buscarEstabelecimentoPorId(oferta.getEstabelecimentoId()); // Busca o estabelecimento pelo ID salvo na oferta
+
+            if (estabelecimento != null) { // Se o ID de estabelecimento salvo na oferta não retornar "null" após a busca, ou seja, existir um estabelecimento correspondente...
+                ofertasDTO.add(new RegistroDeOfertaDTO(oferta, usuario, estabelecimento)); // ...então salva essa oferta para ser exibida na página
+            }
+        }
+
+        model.addAttribute("ofertas", ofertasDTO); // Salva a lista no atributo "ofertas" da model
+        model.addAttribute("apiGoogleMaps", apiGoogleMaps); // Define a chave API para o uso do Google Maps
+        return "index";
     }
 
     // Método para redirecionar à página para cadastro
@@ -28,67 +83,124 @@ public class PaginasController {
         return "cadastrar";
     }
 
-    // Método para criar o registro de um novo usuário
-    @PostMapping("/cadastrar")
-    public String cadastrarUsuario(@ModelAttribute Usuario usuario, Model model) {
-        if (usuarioService.buscarEmail(usuario.getEmail()).isPresent()) {
-            model.addAttribute("erro", "O e-mail já está em uso!");
-            return "cadastrar";
+    // Método para redirecionar à página de sugestões
+    @GetMapping("/sugestoes")
+    public String sugestoes() {
+        return "sugestao";
+    }
+
+    // Método para preparar e redirecionar ao painel administrador
+    @GetMapping("/admin")
+    public String admin(Model model) {
+        List<Usuario> usuarios = usuarioService.listarUsuarios();
+        List<Estabelecimento> estabelecimentos = estabelecimentoService.listarEstabelecimentos();
+        List<RegistroDeOferta> ofertas = registroDeOfertaService.listarOfertas();
+        List<Avaliacao> avaliacoes = avaliacaoService.listarAvaliacoes();
+        List<Sugestao> sugestoes = sugestaoService.listarSugestoes();
+
+        model.addAttribute("usuarios", usuarios);
+        model.addAttribute("estabelecimentos", estabelecimentos);
+        model.addAttribute("ofertas", ofertas);
+        model.addAttribute("avaliacoes", avaliacoes);
+        model.addAttribute("sugestoes", sugestoes);
+        return "admin-painel";
+    }
+
+    // Método para redirecionar à página para login
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    // Método para redirecionar à página de configurações
+    @GetMapping("/configurar")
+    public String configurar(Model model) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuarioBusca = usuarioService.buscarEmail(email);
+
+        model.addAttribute("usuario", usuarioBusca);
+        return "configuracoes";
+    }
+
+    // Método para redirecionar à página para avaliação
+    @GetMapping("/avaliar")
+    public String avaliar(Model model) {
+        List<Estabelecimento> estabelecimentos = estabelecimentoService.listarEstabelecimentos();
+        model.addAttribute("estabelecimentos", estabelecimentos);
+        return "avaliar";
+    }
+
+    // Método para redirecionar à página para cadastro de oferta
+    @GetMapping("/registrar-oferta")
+    public String registrarOferta(Model model) {
+        List<Estabelecimento> estabelecimentos = estabelecimentoService.listarEstabelecimentos();
+        model.addAttribute("estabelecimentos", estabelecimentos);
+        model.addAttribute("apiGoogleMaps", apiGoogleMaps); // Define a chave API para o uso do Google Maps
+        return "registrar-oferta";
+    }
+
+    // Método para redirecionar à página para cadastro de oferta
+    @GetMapping("/lista-compra")
+    public String listaCompra(Model model) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuarioBusca = usuarioService.buscarEmail(email);
+        ListaDeCompra listaBusca = listaDeCompraService.buscarListaPorIdUsuario(usuarioBusca.getId());
+        List<RegistroDeOfertaDTO> ofertasDTO = new ArrayList<>(); // Inicializa uma lista com o DTO
+
+        int contagem = 0;
+        double soma = 0;
+
+        if (listaBusca != null) {
+            List<String> idItens = listaBusca.getItens();
+            List<RegistroDeOferta> itensNaLista = new ArrayList<>();
+
+            for (String id : idItens) {
+                RegistroDeOferta ofertaBusca = registroDeOfertaService.buscarOfertaPorId(id);
+
+                if (ofertaBusca != null) {
+                    itensNaLista.add(ofertaBusca);
+                }
+            }
+
+            for (RegistroDeOferta item : itensNaLista) {
+                Usuario usuario = usuarioBusca;
+                Estabelecimento estabelecimento = estabelecimentoService.buscarEstabelecimentoPorId(item.getEstabelecimentoId());
+                ofertasDTO.add(new RegistroDeOfertaDTO(item, usuario, estabelecimento));
+                contagem++;
+                soma += item.getOfertaDouble();
+            }
+
+            model.addAttribute("lista", ofertasDTO);
+            model.addAttribute("contagem", contagem);
+            model.addAttribute("soma", NumberFormat.getCurrencyInstance(Locale.of("pt", "BR")).format(soma));
+        } else {
+            model.addAttribute("lista", ofertasDTO);
+            model.addAttribute("contagem", contagem);
+            model.addAttribute("soma", NumberFormat.getCurrencyInstance(Locale.of("pt", "BR")).format(soma));
+            listaDeCompraService.cadastrarLista(listaDeCompraService.criarNovaLista(usuarioBusca.getId()));
+        }
+        return "lista-compra";
+    }
+
+    // Método para redirecionar à página de cadastro de endereço
+    @GetMapping("/endereco")
+    public String endereco(Model model) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuarioBusca = usuarioService.buscarEmail(email);
+        Optional<Endereco> enderecoBusca = enderecoService.buscarEnderecoPorIdUsuario(usuarioBusca.getId());
+
+        if (enderecoBusca.isPresent()) {
+            model.addAttribute("usuario", usuarioBusca);
+            model.addAttribute("endereco", enderecoBusca.get());
+            return "endereco-registrado";
         }
 
-        usuario.setAcesso("USER");
-        usuarioService.criarUsuario(usuario);
-        return "redirect:/login";
+        return "endereco";
     }
 
-    // Método para configurar a página inicial
-    @GetMapping("/")
-    public ModelAndView home() {
-        ModelAndView modelAndView = new ModelAndView("layout"); // Cria um novo Layout
-        modelAndView.addObject("content", "home :: content"); // Define o conteúdo da página com base no "content" da página "home"
-        return modelAndView;
-    }
-
-    // Método para configurar a página de exibição de usuários
-    @GetMapping("/usuarios")
-    public String usuarios(Model model) {
-        List<Usuario> usuarios = usuarioService.listarUsuarios(); // Retorna os usuários cadastrados no banco de dados
-        model.addAttribute("usuarios", usuarios); // Salva a lista retornada no atributo "usuarios" da model
-        String fragment = "usuarios :: content";
-        model.addAttribute("content", fragment); // Define o conteúdo da página com base no "content" da página "usuarios"
-        return "usuarios";
-    }
-
-    // Método para configurar a página de edição de usuário
-    @GetMapping("/usuarios/editar/{id}")
-    public String editarUsuario(@PathVariable String id, Model model) {
-        Usuario usuario = usuarioService.buscarUsuario(id); // Retorna o usuário de id específico
-        model.addAttribute("usuario", usuario); // Salva o usuario encontrado no atributo "usuario" da model
-        String fragment = "usuarios-editar :: editar(${usuario})";
-        model.addAttribute("content", fragment); // Define o conteúdo da página com base no "content" da página "usuarios-editar"
-        return "usuarios-editar";
-    }
-
-    // Método para atualizar o registro do usuário editado
-    @PostMapping("/usuarios/atualizar")
-    public String atualizarUsuario(@ModelAttribute Usuario usuario, Model model) {
-        Optional<Usuario> usuarioBusca = usuarioService.buscarEmail(usuario.getEmail());
-
-        if (usuarioBusca.isPresent() && !usuarioBusca.get().getId().equals(usuario.getId())) { // Confirma se o e-mail informado é diferente do anterior e se já está sendo usado
-            model.addAttribute("erro", "O e-mail já está em uso!");
-            model.addAttribute("usuario", usuario);
-            return "usuarios-editar";
-        }
-        
-        usuarioService.atualizarUsuario(usuario); // Atualiza o registro do usuário após a edição
-        
-        return "redirect:/usuarios";
-    }
-
-    // Método para deletar o registro de um usuário
-    @PostMapping("/usuarios/deletar/{id}")
-    public String deletarUsuario(@PathVariable String id) {
-        usuarioService.deletarUsuario(id); // Delete o registro do usuário de id específico
-        return "redirect:/usuarios";
+    // Método para redirecionar à página de redefinição de senha
+    @GetMapping("/redefinir")
+    public String redefinir() {
+        return "esqueceu-senha";
     }
 }

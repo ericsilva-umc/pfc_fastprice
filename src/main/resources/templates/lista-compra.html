@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fast Price - Lista de Compras</title>
+        <link rel="icon" type="image/png" href="imgs/cart.png">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/style_buylist.css">
+    </head>
+    <body>
+        <div class="container">
+            <!--Inclui o header da página-->
+            <header th:replace="~{fragments/header :: header}"></header>
+
+            <!-- ButList -->
+            <div class="shopping-container">
+                <h1 class="shopping-title">Sua lista de compras</h1>
+
+                <div class="table-responsive">
+                    <table class="shopping-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <div class="local-header">
+                                        LOCAL <i class="bi bi-chevron-down ms-1"></i>
+                                    </div>
+                                </th>
+                                <th>PRODUTO</th>
+                                <th>PREÇO</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${lista}">
+                                <td th:text="${item.getEstabelecimento().getNome()}"></td>
+                                <td th:text="${item.getRegistro().getProduto()}"></td>
+                                <td th:text="${item.getRegistro().getOferta()}"></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <button class="check-button">
+                                            <i class=""></i>
+                                        </button>
+                                        <form th:action="@{/lista/remover/} + ${item.getRegistro().getId()}" method="POST">
+                                            <button class="btn-delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>   
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="shopping-footer">
+                    <div th:text="'QUANTIDADE DE ITENS: ' + ${contagem}"class="shopping-quantity"></div>
+                    <div th:text="'TOTAL: ' + ${soma}"class="shopping-total"></div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Seleciona todos os botões com a classe 'check-button'
+                const checkButtons = document.querySelectorAll('.check-button');
+
+                // Adiciona um evento de clique a cada botão
+                checkButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        // Adiciona ou remove a classe 'checked' ao botão
+                        this.classList.toggle('checked');
+
+                        // Seleciona o <i> dentro do botão
+                        const icon = this.querySelector('i');
+
+                        // Verifica se o botão agora tem a classe 'checked'
+                        if (this.classList.contains('checked')) {
+                            // Adiciona a classe 'bi-check' ao <i>
+                            icon.classList.add('bi', 'bi-check');
+                        } else {
+                            // Remove a classe 'bi-check' do <i>
+                            icon.classList.remove('bi', 'bi-check');
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

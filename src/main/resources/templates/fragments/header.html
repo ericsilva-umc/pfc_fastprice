@@ -1,20 +1,48 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     <header th:fragment="header">
-        <a th:href="@{/}"><img src="/imgs/FASTPRICELOGO.png" alt="Fast Price Logo" class="logo"></a>        
+        <a th:href="@{/}">
+            <img src="/imgs/logo.png" alt="Fast Price Logo" class="logo">
+        </a>
         <div class="search-container">
             <img src="/imgs/search.png" alt="Buscar" class="search-icon" width="20">
             <input type="text" class="search-input" placeholder="Pesquise por um item ou supermercado...">
         </div>
-        <div class="auth-container">
-            <div th:if="${#authorization.expression('isAnonymous')}">
-                <a th:href="@{/login}" class="btn btn-primary">Entrar</a>
-                <a th:href="@{/cadastrar}" class="create-account">Criar uma conta</a>
-            </div>
-            <div th:if="${#authorization.expression('isAuthenticated')}">
-                <a th:href="@{/usuarios}" class="btn btn-primary">Painel de Usuários</a>
-                <a th:href="@{/logout}" class="btn btn-primary">Logout</a>
+        <div sec:authorize="isAnonymous()">
+            <div class="auth-container">
+                <button onclick="window.location.href = '/login'" class="btn btn-primary">Entrar</button>
+                <a th:href="@{/cadastrar}" class="create-account">Criar uma conta</a>  
             </div>
         </div>
+        <div sec:authorize="isAuthenticated()">
+            <div class="icons col-md-2">
+                <div class="cart-icon me-3">
+                    <i class="fas fa-shopping-cart fs-3" onclick="window.location.href = '/lista-compra'"></i>
+                </div>
+                <div class="dropdown">
+                    <button class="user-circle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end user-dropdown" aria-labelledby="userDropdown">
+                        <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item menu" th:href="@{/admin}" data-bs-toggle="tooltip"
+                            data-bs-placement="right" title="Painel"><i class="bi bi-shield-fill"></i></a></li>
+                        <li><a class="dropdown-item menu" th:href="@{/avaliar}" data-bs-toggle="tooltip"
+                               data-bs-placement="right" title="Avaliar"><i class="bi bi-star-fill"></i></a></li>
+                        <li><a class="dropdown-item menu" th:href="@{/endereco}" data-bs-toggle="tooltip"
+                               data-bs-placement="right" title="Endereço"><i class="fas fa-home"></i></a></li>
+                        <li><a class="dropdown-item menu" th:href="@{/configurar}" data-bs-toggle="tooltip"
+                               data-bs-placement="right" title="Configurações"><i class="fas fa-cog"></i></a></li>
+                        <li><a class="dropdown-item menu" th:href="@{/sugestoes}" data-bs-toggle="tooltip"
+                               data-bs-placement="right" title="Sugestões"><i class="bi bi-lightbulb-fill"></i></a></li>
+                        <li><a class="dropdown-item menu" th:href="@{/logout}" data-bs-toggle="tooltip"
+                               data-bs-placement="right" title="Sair"><i class="fas fa-sign-out-alt"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!--Scripts para a exibição do dropdown de opções do usuário-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="/js/tooltip.js"></script>
     </header>
 </html>

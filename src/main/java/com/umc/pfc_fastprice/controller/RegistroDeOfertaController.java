@@ -1,55 +1,62 @@
 package com.umc.pfc_fastprice.controller;
 
+import com.umc.pfc_fastprice.model.Estabelecimento;
 import com.umc.pfc_fastprice.model.RegistroDeOferta;
-import com.umc.pfc_fastprice.repository.RegistroDeOfertaRepository;
+import com.umc.pfc_fastprice.model.Usuario;
+import com.umc.pfc_fastprice.service.EstabelecimentoService;
+import com.umc.pfc_fastprice.service.RegistroDeOfertaService;
+import com.umc.pfc_fastprice.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@RestController
-@RequestMapping("/api/registros")
+@Controller
 public class RegistroDeOfertaController {
 
     @Autowired
-    private RegistroDeOfertaRepository registroRepository;
+    RegistroDeOfertaService registroDeOfertaService;
 
-    @PostMapping
-    public RegistroDeOferta criarRegistro(@RequestBody RegistroDeOferta registroDeOferta) {
-        return registroRepository.insert(registroDeOferta);
+    @Autowired
+    EstabelecimentoService estabelecimentoService;
+
+    @Autowired
+    UsuarioService usuarioService;
+
+    // Método para redirecionar à página para cadastro de oferta
+    @PostMapping("/registrodeoferta/cadastrar")
+    public String cadastrarOferta(@ModelAttribute RegistroDeOferta oferta, @RequestParam String estabelecimentoId) {
+        Estabelecimento estabelecimento = estabelecimentoService.buscarEstabelecimentoPorId(estabelecimentoId); // Busca o ID do estabelecimento no banco de dados
+        String email = SecurityContextHolder.getContext().getAuthentication().getName(); // Obtém o e-mail do usuário logado através da sessão
+        Usuario usuarioBusca = usuarioService.buscarEmail(email); // Busca por um usuário no banco de dados utilizando o e-mail
+
+        oferta.setUsuarioId(usuarioBusca.getId()); // Define no registro da oferta o ID do usuário logado
+        oferta.setEstabelecimentoId(estabelecimento.getId()); // Define no registro de oferta o ID do estabelecimento encontrado
+        oferta.setPositivo("0"); // Define com zero o atributo "positivo"
+        oferta.setNegativo("0"); // Define com zero o atributo "negativo"
+
+        registroDeOfertaService.cadastrarOferta(oferta); // Cadastra o objeto de oferta montado no banco de dados
+        return "redirect:/"; // Redireciona à página principal
     }
 
-    @GetMapping
-    public List<RegistroDeOferta> listarRegistros() {
-        return registroRepository.findAll();
+    // Método ADMIN para atualizar o registro de uma oferta
+    @PostMapping("/admin/registrodeoferta/atualizar")
+    public String adminAtualizarOferta(@ModelAttribute RegistroDeOferta oferta, RedirectAttributes atributos) {
+        registroDeOfertaService.atualizarOferta(oferta);
+
+        atributos.addFlashAttribute("mostrarAlerta", true);
+        atributos.addFlashAttribute("mensagemAlerta", "Processo realizado.");
+        return "redirect:/admin";
     }
+    
+    // Método ADMIN para deletar o registro de uma oferta
+    @PostMapping("/admin/registrodeoferta/deletar/{id}")
+    public String adminDeletarOferta(@PathVariable String id, RedirectAttributes atributos) {
+        registroDeOfertaService.deletarOferta(id);
 
-    @PutMapping("/{id}")
-    public String atualizarRegistro(@PathVariable String id, @RequestBody RegistroDeOferta registroDeOferta) {
-        Optional<RegistroDeOferta> registroBusca = registroRepository.findById(id);
-
-        if (registroBusca.isPresent()) {
-            registroDeOferta.setId(id);
-            registroRepository.save(registroDeOferta);
-
-            return "Registro atualizado com sucesso.";
-        }
-
-        return "Registro não existe.";
-    }
-
-    @GetMapping("/{id}")
-    public RegistroDeOferta buscaRegistro(@PathVariable String id) {
-        return registroRepository.findById(id).orElseThrow(() -> new RuntimeException("Registro não encontrado. ID: " + id));
-    }
-
-    @DeleteMapping("/{id}")
-    public String deletarRegistro(@PathVariable String id) {
-        if (registroRepository.existsById(id)) {
-            registroRepository.deleteById(id);
-            return "Registro removido com sucesso.";
-        } else {
-            return "Registro não encontrado.";
-        }
+        atributos.addFlashAttribute("mostrarAlerta", true);
+        atributos.addFlashAttribute("mensagemAlerta", "Processo realizado.");
+        return "redirect:/admin";
     }
 }

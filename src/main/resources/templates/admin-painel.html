@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fast Price - Painel Admin</title>
+        <link rel="icon" type="image/png" href="imgs/cart.png">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/style_admin_panel.css">
+    </head>
+    <body>
+        <div class="container">
+            <!--Inclui o header da página-->
+            <header th:replace="~{fragments/header :: header}"></header>
+
+            <!-- Dashboard Card -->
+            <div class="container dashboard-container mt-5">
+                <!-- Navigation Tabs -->
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-tab="usuarios">Usuários</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-tab="estabelecimentos">Estabelecimentos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-tab="precos">Preços</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-tab="avaliacoes">Avaliações</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-tab="sugestoes">Sugestões</a>
+                    </li>
+                </ul>
+
+                <!-- User Tab Content -->
+                <div id="usuarios" class="tab-content fade show active">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>E-mail</th>
+                                    <th>Acesso</th>
+                                    <th colspan="2">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="usuario : ${usuarios}">
+                                    <form th:action="@{/admin/usuario/atualizar}" method="POST" onsubmit="return confirmAction('Deseja atualizar este registro?');">
+                                        <input name="id" th:value="${usuario.getId()}" hidden>
+                                        <input name="senha" th:value="${usuario.getSenha()}" hidden>
+                                        <td>
+                                            <input name="nome" th:value="${usuario.getNome()}" class="form-control" required>
+                                        </td>
+                                        <td>
+                                            <input name="email" th:value="${usuario.getEmail()}" class="form-control" required>
+                                        </td>
+                                        <td>
+                                            <input name="acesso" th:value="${usuario.getAcesso()}" class="form-control" required>
+                                        </td>
+                                        <td class="col-md-1">
+                                            <button class="btn action-btn edit-btn" type="submit">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </td>
+                                    </form>
+                                    <td class="col-md-1">
+                                        <form th:action="@{'/admin/usuario/deletar/' + ${usuario.getId()}}" method="POST" onsubmit="return confirmAction('Deseja excluir este registro?');">
+                                            <button class="btn action-btn delete-btn" type="submit">
+                                                <i class="bi bi-trash3-fill"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Establishment Tab Content -->
+                <div id="estabelecimentos" class="tab-content fade show" role="tabpanel">
+                    <div class="table-responsive">
+                        <button class="btn add-btn" data-bs-toggle="modal" data-bs-target="#addEstabelecimentoModal">
+                            <i class="bi bi-plus"></i> Novo Estabelecimento
+                        </button>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Estabelecimento</th>
+                                    <th colspan="2">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="estabelecimento : ${estabelecimentos}">
+                                    <form th:action="@{/admin/estabelecimento/atualizar}" method="POST" onsubmit="return confirmAction('Deseja atualizar este registro?');">
+                                        <input name="id" th:value="${estabelecimento.getId()}" hidden>
+                                        <td>
+                                            <input name="nome" th:value="${estabelecimento.getNome()}" class="form-control" required>
+                                        </td>
+                                        <td class="col-md-1">
+                                            <button class="btn action-btn edit-btn" type="submit">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </td>
+                                    </form>
+                                    <td class="col-md-1">
+                                        <form th:action="@{'/admin/estabelecimento/deletar/' + ${estabelecimento.getId()}}" method="POST" onsubmit="return confirmAction('Deseja excluir este registro?');">
+                                            <button class="btn action-btn delete-btn" type="submit">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Price Tab Content -->
+                <div id="precos" class="tab-content fade show" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Oferta</th>
+                                    <th>Unidade</th>
+                                    <th>Localização</th>
+                                    <th colspan="2">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="oferta : ${ofertas}">
+                                    <form th:action="@{/admin/registrodeoferta/atualizar}" method="POST" onsubmit="return confirmAction('Deseja atualizar este registro?');">
+                                        <input name="id" th:value="${oferta.getId()}" hidden>
+                                        <input name="usuarioId" th:value="${oferta.getUsuarioId()}" hidden>
+                                        <input name="estabelecimentoId" th:value="${oferta.getEstabelecimentoId()}" hidden>
+                                        <input name="positivo" th:value="${oferta.getPositivo()}" hidden>
+                                        <input name="negativo" th:value="${oferta.getNegativo()}" hidden>
+                                        <td>
+                                            <input name="produto" th:value="${oferta.getProduto()}" class="form-control" required>
+                                        </td>
+                                        <td>
+                                            <input name="oferta" th:value="${oferta.getOfertaDouble()}" class="form-control" required>
+                                        </td>
+                                        <td>
+                                            <input name="unidade" th:value="${oferta.getUnidade()}" class="form-control" required>
+                                        </td>
+                                        <td>
+                                            <input name="localizacao" th:value="${oferta.getLocalizacao()}" class="form-control" required>
+                                        </td>
+                                        <td class="col-md-1">
+                                            <button class="btn action-btn edit-btn" type="submit">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </td>
+                                    </form>
+                                    <td class="col-md-1">
+                                        <form th:action="@{'/admin/registrodeoferta/deletar/' + ${oferta.getId()}}" method="POST" onsubmit="return confirmAction('Deseja excluir este registro?');">
+                                            <button class="btn action-btn delete-btn" type="submit">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Rating Tab Content -->
+                <div id="avaliacoes" class="tab-content fade show" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Estabelecimento</th>
+                                    <th>Preço</th>
+                                    <th>Atendimento</th>
+                                    <th>Tempo</th>
+                                    <th>Variedade</th>
+                                    <th colspan="2">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="avaliacao : ${avaliacoes}">
+                                    <td>
+                                        <input th:value="${avaliacao.getEstabelecimentoId()}" class="form-control" disabled>
+                                    </td>
+                                    <form th:action="@{/admin/avaliacao/atualizar}" method="POST" onsubmit="return confirmAction('Deseja atualizar este registro?');">
+                                        <input name="id" th:value="${avaliacao.getId()}" hidden>
+                                        <input name="estabelecimentoId" th:value="${avaliacao.getEstabelecimentoId()}" hidden>
+                                        <td>
+                                            <input name="preco" th:value="${avaliacao.getPreco()}" class="form-control" required>
+                                        </td>
+                                        <td>
+                                            <input name="atendimento" th:value="${avaliacao.getAtendimento()}" class="form-control" required>
+                                        </td>
+                                        <td>
+                                            <input name="tempo" th:value="${avaliacao.getTempo()}" class="form-control" required>
+                                        </td>
+                                        <td>
+                                            <input name="variedade" th:value="${avaliacao.getVariedade()}" class="form-control" required>
+                                        </td>
+                                        <td class="col-md-1">
+                                            <button class="btn action-btn edit-btn" type="submit">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </td>
+                                    </form>
+                                    <td class="col-md-1">
+                                        <form th:action="@{'/admin/avaliacao/deletar/' + ${avaliacao.getId()}}" method="POST" onsubmit="return confirmAction('Deseja excluir este registro?');">
+                                            <button class="btn action-btn delete-btn" type="submit">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Establishment Tab Content -->
+                <div id="sugestoes" class="tab-content fade show" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Local do Site</th>
+                                    <th>Descrição</th>
+                                    <th colspan="2">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="sugestao : ${sugestoes}">
+                                    <form th:action="@{/admin/sugestao/atualizar}" method="POST" onsubmit="return confirmAction('Deseja atualizar este registro?');">
+                                        <input name="id" th:value="${sugestao.getId()}" hidden>
+                                        <td>
+                                            <input name="tipo" th:value="${sugestao.getTipo()}" class="form-control" required>
+                                        </td>
+                                        <td>
+                                            <input name="localDoSite" th:value="${sugestao.getLocalDoSite()}" class="form-control" required>
+                                        </td>
+                                        <td>
+                                            <textarea name="descricao" th:text="${sugestao.getDescricao()}" class="form-control detail-suggest custom-input" maxlength="400" required></textarea>
+                                        </td>
+                                        <td class="col-md-1">
+                                            <button class="btn action-btn edit-btn" type="submit">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </td>
+                                    </form>
+                                    <td class="col-md-1">
+                                        <form th:action="@{'/admin/sugestao/deletar/' + ${sugestao.getId()}}" method="POST" onsubmit="return confirmAction('Deseja excluir este registro?');">
+                                            <button class="btn action-btn delete-btn" type="submit">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Add Establishment  -->
+        <div class="modal fade" id="addEstabelecimentoModal" tabindex="-1" aria-labelledby="addEstabelecimentoModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addEstabelecimentoModalLabel">Adicionar Estabelecimento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form th:action="@{/admin/estabelecimento/cadastrar}" method="POST">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="estabelecimentoName" class="form-label">Nome do Estabelecimento</label>
+                                <input name="nome" class="form-control" id="estabelecimentoName" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn modal-save-btn" id="saveEstabelecimento">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            function confirmAction(message) {
+                return confirm(message);
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                // Tab navigation
+                const navLinks = document.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function (e) {
+                        e.preventDefault();
+
+                        // Remove active class from all tabs and content
+                        navLinks.forEach(l => l.classList.remove('active'));
+                        document.querySelectorAll('.tab-content').forEach(content => {
+                            content.classList.remove('active');
+                        });
+
+                        // Add active class to clicked tab and show corresponding content
+                        this.classList.add('active');
+                        const tabId = this.getAttribute('data-tab');
+                        document.getElementById(tabId).classList.add('active');
+                    });
+                });
+
+                // Initial setup of action button listeners
+                addActionButtonListeners();
+            });
+        </script>
+
+        <!--Exibe uma mensagem quando o usuário logado tenta realizar certas ações em seu próprio registro de usuário-->
+        <script th:inline="javascript">
+            let mostrarAlerta = /*[[${mostrarAlerta}]]*/ false;
+            let mensagemAlerta = /*[['' + ${mensagemAlerta}]]*/ '';
+
+            document.addEventListener('DOMContentLoaded', function () {
+                if (mostrarAlerta) {
+                    alert(mensagemAlerta);
+                }
+                ;
+            });
+        </script>
+    </body>
+</html>

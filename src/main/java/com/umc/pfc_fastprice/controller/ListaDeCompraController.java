@@ -1,55 +1,66 @@
 package com.umc.pfc_fastprice.controller;
 
 import com.umc.pfc_fastprice.model.ListaDeCompra;
-import com.umc.pfc_fastprice.repository.ListaDeCompraRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.umc.pfc_fastprice.model.RegistroDeOferta;
+import com.umc.pfc_fastprice.model.Usuario;
+import com.umc.pfc_fastprice.service.ListaDeCompraService;
+import com.umc.pfc_fastprice.service.RegistroDeOfertaService;
+import com.umc.pfc_fastprice.service.UsuarioService;
 import java.util.List;
-import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/listas")
+@Controller
 public class ListaDeCompraController {
 
     @Autowired
-    private ListaDeCompraRepository listaRepository;
+    UsuarioService usuarioService;
 
-    @PostMapping
-    public ListaDeCompra criarLista(@RequestBody ListaDeCompra listaDeCompra) {
-        return listaRepository.insert(listaDeCompra);
+    @Autowired
+    RegistroDeOfertaService registroDeOfertaService;
+
+    @Autowired
+    ListaDeCompraService listaDeCompraService;
+
+    @PostMapping("/lista/adicionar/{id}")
+    public String adicionarItem(@PathVariable String id) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuarioBusca = usuarioService.buscarEmail(email);
+        RegistroDeOferta ofertaBusca = registroDeOfertaService.buscarOfertaPorId(id);
+        ListaDeCompra listaBusca = listaDeCompraService.buscarListaPorIdUsuario(usuarioBusca.getId());
+
+        if (ofertaBusca != null) {
+            if (listaBusca != null) {
+                if (!listaDeCompraService.itemExisteNaLista(listaBusca, ofertaBusca.getId())) {
+                    listaDeCompraService.adicionarItemNaLista(listaBusca, ofertaBusca.getId());
+                }
+            } else {
+                listaDeCompraService.adicionarItemNaLista(listaDeCompraService.criarNovaLista(usuarioBusca.getId()), ofertaBusca.getId());
+            }
+
+        }
+        return "redirect:/lista-compra";
     }
 
-    @GetMapping
-    public List<ListaDeCompra> listarListas() {
-        return listaRepository.findAll();
-    }
+    @PostMapping("/lista/remover/{id}")
+    public String removerItem(@PathVariable String id) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuarioBusca = usuarioService.buscarEmail(email);
+        ListaDeCompra listaBusca = listaDeCompraService.buscarListaPorIdUsuario(usuarioBusca.getId());
+        List<String> itensLista = listaBusca.getItens();
 
-    @PutMapping("/{id}")
-    public String atualizarLista(@PathVariable String id, @RequestBody ListaDeCompra listaDeCompra) {
-        Optional<ListaDeCompra> listaBusca = listaRepository.findById(id);
-
-        if (listaBusca.isPresent()) {
-            listaDeCompra.setId(id);
-            listaRepository.save(listaDeCompra);
-
-            return "Lista atualizada com sucesso.";
+        for (String idOferta : itensLista) {
+            if (idOferta.equals(id)) {
+                itensLista.remove(id);
+                break;
+            }
         }
 
-        return "Lista não existe.";
-    }
+        listaBusca.setItens(itensLista);
 
-    @GetMapping("/{id}")
-    public ListaDeCompra buscaLista(@PathVariable String id) {
-        return listaRepository.findById(id).orElseThrow(() -> new RuntimeException("Lista não encontrada. ID: " + id));
-    }
-
-    @DeleteMapping("/{id}")
-    public String deletarLista(@PathVariable String id) {
-        if (listaRepository.existsById(id)) {
-            listaRepository.deleteById(id);
-            return "Lista removida com sucesso.";
-        } else {
-            return "Lista não encontrada.";
-        }
+        listaDeCompraService.atualizarLista(listaBusca);
+        return "redirect:/lista-compra";
     }
 }

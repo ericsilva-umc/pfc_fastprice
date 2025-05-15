@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fast Price - Comparação de Preços</title>
+        <link rel="icon" type="image/png" href="imgs/cart.png">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/style_index.css">
+        <link rel="stylesheet" href="/css/style_indexlogged.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <!--Inclui o header da página-->
+            <header th:replace="~{fragments/header :: header}"></header>
+
+            <div class="main-content">
+                <h2>Encontrou um produto com preço legal?</h2>
+
+                <button onclick="window.location.href = '/registrar-oferta'" class="btn btn-blue">Registre um produto!</button>
+
+                <div class="divider"></div>
+
+                <!--Tabela de exibição dos registros de oferta-->
+                <table class="price-table">
+                    <tr class="table-header">
+                        <th class="header-cell">ESTABELECIMENTO</th>
+                        <th class="header-cell">PRODUTO</th>
+                        <th class="header-cell">PREÇO</th>
+                        <th class="header-cell">LOCALIZAÇÃO</th>
+                        <th class="header-cell">OPÇÕES</th>
+                    </tr>
+                    <tr th:each="oferta : ${ofertas}" class="table-row">
+                        <td th:text="${oferta.getEstabelecimento().getNome()}" class="table-cell"></td>
+                        <td th:text="${oferta.getRegistro().getProduto()}" class="table-cell"></td>
+                        <td th:text="${oferta.getRegistro().getOferta()} + '/' + ${oferta.getRegistro().getUnidade()}" class="table-cell"></td>
+                        <td class="table-cell-btn">
+                            <button th:attr="onclick=|abrirMapa('${oferta.getRegistro().getLocalizacao()}')|" type="button" class="location-btn">Ver Localização</button>
+                            <div sec:authorize="isAnonymous()" class="list-item-wrapper" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" title="Entre para salvar o preço na sua lista!">
+                                <button class="btn list-btn fa-solid fa-basket-shopping fs-5" disabled></button>
+                            </div>
+                            <div sec:authorize="isAuthenticated()" class="list-item-wrapper" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" title="Salvar na lista de compras">
+                                <form th:action="@{/lista/adicionar/} + ${oferta.getRegistro().getId()}" method="POST">
+                                    <button type="submit" class="btn list-btn fa-solid fa-basket-shopping fs-5"></button>
+                                </form>
+                                
+                            </div>
+                        </td>
+                        <td class="rating-price">
+                            <div sec:authorize="isAnonymous()" class="rating-item-wrapper" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" title="Entre para confirmar o preço!">
+                                <div class="rating-item">
+                                    <i class="fa-regular fa-thumbs-up fs-4 up-icon" disabled></i>
+                                    <span class="up-count" th:text="${oferta.getRegistro().getPositivo()}"></span>
+                                </div>
+                            </div>
+                            <div sec:authorize="isAnonymous()" class="rating-item-wrapper" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" title="Entre para não confirmar o preço!">
+                                <div class="rating-item">
+                                    <i class="fa-regular fa-thumbs-down fs-4 down-icon" disabled></i>
+                                    <span class="down-count" th:text="${oferta.getRegistro().getNegativo()}"></span>
+                                </div>
+                            </div> 
+                            <div sec:authorize="isAuthenticated()" class="rating-item-wrapper" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" title="Confirmar o preço">
+                                <div class="rating-item">
+                                    <i class="fa-regular fa-thumbs-up fs-4 up-icon"></i>
+                                    <span class="up-count" th:text="${oferta.getRegistro().getPositivo()}"></span>
+                                </div>
+                            </div>
+                            <div sec:authorize="isAuthenticated()" class="rating-item-wrapper" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" title="Não confirmar o preço">
+                                <div class="rating-item">
+                                    <i class="fa-regular fa-thumbs-down fs-4 down-icon"></i>
+                                    <span class="down-count" th:text="${oferta.getRegistro().getNegativo()}"></span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <!--Modal para o mapa da API do Google Maps-->
+                <div id="modalMapa" style="display:none; position:fixed; top:10%; left:30%; width:40%; height:80%; background:white; border:1px solid #ccc; z-index:9999;">
+                    <button onclick="fecharMapa()">Fechar</button>
+                    <div id="mapa" style="width:100%; height:90%;"></div>
+                </div>
+
+                <!--JavaScript para a definição dos métodos para abrir e fechar o mapa-->
+                <script>
+                    let mapa;
+                    let marcador;
+
+                    function abrirMapa(localizacao) {
+                        document.getElementById('modalMapa').style.display = 'block';
+
+                        const string = localizacao.split(',');
+                        const lat = parseFloat(string[0]);
+                        const lng = parseFloat(string[1]);
+                        const posicao = {lat: lat, lng: lng};
+
+                        mapa = new google.maps.Map(document.getElementById('mapa'), {center: posicao, zoom: 15, mapId: "mapa"});
+                        marcador = new google.maps.marker.AdvancedMarkerElement({position: posicao, map: mapa});
+                    }
+
+                    function fecharMapa() {
+                        document.getElementById('modalMapa').style.display = 'none';
+                        mapa = null;
+                        marcador = null;
+                    }
+                </script>
+
+                <!--Carrega a chave API do Google Maps-->
+                <script async defer th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${apiGoogleMaps} + '&libraries=marker'}"></script>
+            </div>
+        </div>
+
+        <script sec:authorize="isAuthenticated()">
+            document.addEventListener('DOMContentLoaded', function () {
+
+                // Logic for like/dislike icons
+                const thumbsUpIcons = document.querySelectorAll('.up-icon');
+                const thumbsDownIcons = document.querySelectorAll('.down-icon');
+
+                thumbsUpIcons.forEach(icon => {
+                    icon.addEventListener('click', function () {
+                        // Navega para o wrapper pai, depois para o wrapper irmão e então encontra o down-icon
+                        const downIconWrapper = this.closest('.rating-item-wrapper').nextElementSibling;
+                        const downIcon = downIconWrapper ? downIconWrapper.querySelector('.down-icon') : null;
+
+                        if (this.classList.contains('fa-regular')) {
+                            this.classList.remove('fa-regular');
+                            this.classList.add('fa-solid');
+
+                            if (downIcon && downIcon.classList.contains('fa-solid')) {
+                                downIcon.classList.remove('fa-solid');
+                                downIcon.classList.add('fa-regular');
+                            }
+                        } else {
+                            this.classList.remove('fa-solid');
+                            this.classList.add('fa-regular');
+                        }
+                    });
+                });
+
+                thumbsDownIcons.forEach(icon => {
+                    icon.addEventListener('click', function () {
+                        // Navega para o wrapper pai, depois para o wrapper irmão e então encontra o up-icon
+                        const upIconWrapper = this.closest('.rating-item-wrapper').previousElementSibling;
+                        const upIcon = upIconWrapper ? upIconWrapper.querySelector('.up-icon') : null;
+
+                        if (this.classList.contains('fa-regular')) {
+                            this.classList.remove('fa-regular');
+                            this.classList.add('fa-solid');
+
+                            if (upIcon && upIcon.classList.contains('fa-solid')) {
+                                upIcon.classList.remove('fa-solid');
+                                upIcon.classList.add('fa-regular');
+                            }
+                        } else {
+                            this.classList.remove('fa-solid');
+                            this.classList.add('fa-regular');
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
