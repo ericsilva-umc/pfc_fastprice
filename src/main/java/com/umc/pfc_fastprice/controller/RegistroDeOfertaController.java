@@ -6,7 +6,9 @@ import com.umc.pfc_fastprice.model.Usuario;
 import com.umc.pfc_fastprice.service.EstabelecimentoService;
 import com.umc.pfc_fastprice.service.RegistroDeOfertaService;
 import com.umc.pfc_fastprice.service.UsuarioService;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +35,44 @@ public class RegistroDeOfertaController {
 
         oferta.setUsuarioId(usuarioBusca.getId()); // Define no registro da oferta o ID do usuário logado
         oferta.setEstabelecimentoId(estabelecimento.getId()); // Define no registro de oferta o ID do estabelecimento encontrado
-        oferta.setPositivo("0"); // Define com zero o atributo "positivo"
-        oferta.setNegativo("0"); // Define com zero o atributo "negativo"
 
         registroDeOfertaService.cadastrarOferta(oferta); // Cadastra o objeto de oferta montado no banco de dados
         return "redirect:/"; // Redireciona à página principal
     }
 
+    
+    @PostMapping("/registrodeoferta/avaliar/{id}")
+    public ResponseEntity<String> avaliarOferta(@PathVariable String id, @RequestBody Map<String, String> avaliacao) {
+        RegistroDeOferta oferta = registroDeOfertaService.buscarOfertaPorId(id);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName(); // Obtém o e-mail do usuário logado através da sessão
+        Usuario usuarioBusca = usuarioService.buscarEmail(email); // Busca por um usuário no banco de dados utilizando o e-mail
+        String tipo = avaliacao.get("tipo");
+        
+        if (tipo.equals("positivo")) {
+            if (oferta.getNegativo().contains(usuarioBusca.getId())) {
+                oferta.getNegativo().remove(usuarioBusca.getId());
+            } 
+            if (oferta.getPositivo().contains(usuarioBusca.getId())) {
+                oferta.getPositivo().remove(usuarioBusca.getId());
+            } else {
+                oferta.getPositivo().add(usuarioBusca.getId());
+            }
+            
+        } else if (tipo.equals("negativo")) {
+            if (oferta.getPositivo().contains(usuarioBusca.getId())) {
+                oferta.getPositivo().remove(usuarioBusca.getId());
+            } 
+            if (oferta.getNegativo().contains(usuarioBusca.getId())) {
+                oferta.getNegativo().remove(usuarioBusca.getId());
+            } else {
+                oferta.getNegativo().add(usuarioBusca.getId());
+            }
+        }
+        
+        registroDeOfertaService.atualizarOferta(oferta);
+        return ResponseEntity.ok("Avaliação de oferta registrada.");
+    }
+    
     // Método ADMIN para atualizar o registro de uma oferta
     @PostMapping("/admin/registrodeoferta/atualizar")
     public String adminAtualizarOferta(@ModelAttribute RegistroDeOferta oferta, RedirectAttributes atributos) {

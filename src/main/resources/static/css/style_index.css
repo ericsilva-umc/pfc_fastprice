@@ -122,22 +122,27 @@ header {
   font-weight: bold;
 }
 
+.main-content h1 {
+  color: #494949;
+  font-size: 20px;
+}
+
 .tooltip-inner {
-  background-color: #494949;
+  background-color: #0168b3;
   color: white;
   padding: 5px 10px;
   border-radius: 0.25rem;
 }
 
 .tooltip.bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before {
-  border-top-color: #494949 !important;
+  border-top-color: #0168b3 !important;
 }
 
 /* Table */
 .divider {
   height: 1px;
   background-color: #d9d9d9;
-  margin: 20px 0 40px;
+  margin: 20px 0 20px;
 }
 
 .price-table {

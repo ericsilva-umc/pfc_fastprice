@@ -19,24 +19,25 @@
                 </a>
             </div>
             <div class="forget-card">
-                <a th:href="@{/login}" class="back-button">
-                    <i class="bi bi-arrow-left"></i> Voltar
-                </a>
-                <h1 class="mb-2">Redefinição de senha</h1>
-
-                <div th:if="${param.emailenviado}">
-                    <p class="text-muted mb-4">E-mail para a redefinição de senha enviado!</p>
+                <div th:if="${erro}">
+                    <a th:href="@{/login}" class="back-button">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                    
+                    <h1 class="mb-2">Redefinição de senha</h1>
+                    
+                    <p class="error" th:text="${erro}"></p>
                 </div>
 
-                <div th:if="${param.emailenviado == null}">
-                    <p class="text-muted mb-4">Informe seu e-mail. Será enviado um link para a redefinição de senha</p>
-
-                    <form th:action="@{/email-redefinicao}" method="POST">
-                        <div class="mb-4">
-                            <label for="email" class="form-label fw-medium">E-mail</label>
-                            <input type="email" name="email" class="input-field" placeholder="Digite seu e-mail">
-                            <button type="submit" class="btn btn-primary w-100">Enviar</button>
-                        </div>
+                <div th:if="${erro == null}">
+                    <form th:action="@{/redefinir-senha}" method="POST" oninput="repetir.setCustomValidity(repetir.value != senha.value ? 'As senhas não conferem.' : '')">
+                        <h1 class="mb-2">Redefinição de senha</h1>
+                        
+                        <input type="hidden" name="token" th:value="${token}"/>
+                        <input type="password" name="senha" id="campoSenha" class="input-field" placeholder="Digite uma senha" required>
+                        <input type="password" name="repetir" id="campoSenhaRepetir" class="input-field" placeholder="Repita a senha">
+                        
+                        <input type="submit" value="Redefinir Senha" class="btn btn-primary">
                     </form>
                 </div>
             </div>

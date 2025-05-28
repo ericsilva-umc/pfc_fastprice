@@ -4,6 +4,8 @@ import com.umc.pfc_fastprice.service.AutenticarUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,6 +14,8 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMongoAuditing
+@PropertySource("classpath:application-secrets.properties")
 public class SecurityConfig {
     @Autowired
     private AutenticarUsuarioService autenticarUsuarioService;
@@ -21,7 +25,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth // Configura os endereços que podem ser acessados sem autenticação
-                .requestMatchers("/", "/login", "/redefinir", "/cadastrar", "/usuario/cadastrar", "/css/**", "/imgs/**", "/js/**").permitAll()
+                .requestMatchers("/", "/login", "/esqueceu-senha", "/email-redefinicao", "/redefinir-senha", "/busca", "/cadastrar", "/usuario/cadastrar", "/css/**", "/imgs/**", "/js/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated() // Os demais endereços requerem autenticação
             )

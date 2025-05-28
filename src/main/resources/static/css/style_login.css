@@ -131,3 +131,11 @@ h1 {
     max-width: 100%;
   }
 }
+
+/* Mensagem de erro  */
+.error {
+  text-align: center;
+  color: crimson;
+  font-size: 14px;
+  margin-bottom: 16px;
+}

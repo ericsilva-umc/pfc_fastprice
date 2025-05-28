@@ -45,13 +45,6 @@
                             </div>
 
                             <div class="info-item">
-                                <div class="info-label">Senha</div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <input type="text" value="**********" disabled class="disabled-edit">
-                                </div>
-                            </div>
-
-                            <div class="info-item">
                                 <div class="info-label">Nome da Conta</div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <input type="text" th:value="${usuario.getNome()}" disabled class="disabled-edit">
@@ -78,13 +71,6 @@
                             <!--Exibe uma mensagem quando o e-mail informado já está cadastrado-->
                             <div th:if="${erro}" class="error">
                                 <p th:text="${erro}"></p>
-                            </div>
-
-                            <div class="info-item">
-                                <div class="info-label">Senha</div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <input type="text" value="**********" disabled class="disabled-edit">
-                                </div>
                             </div>
 
                             <div class="info-item">

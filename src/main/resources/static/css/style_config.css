@@ -118,7 +118,7 @@ header {
 }
 
 .tooltip-inner {
-    background-color: #ff5722;
+    background-color: #0168b3;
     color: white;
     padding: 5px 10px;
     border-radius: 0.25rem;
@@ -126,7 +126,7 @@ header {
 
 .tooltip.bs-tooltip-auto[data-popper-placement^="right"] .tooltip-arrow::before,
 .tooltip.bs-tooltip-right .tooltip-arrow::before {
-    border-right-color: #ff5722 !important;
+    border-right-color: #0168b3 !important;
 }
 
 /* User Profile Card */

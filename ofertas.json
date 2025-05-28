@@ -8,8 +8,8 @@
   "oferta": 6.4,
   "unidade": "kg",
   "localizacao": "-23.52275568262954,-46.20746612548828",
-  "positivo": "0",
-  "negativo": "0",
+  "positivo": [],
+  "negativo": [],
   "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
 },
 {
@@ -22,8 +22,8 @@
   "oferta": 11.8,
   "unidade": "kg",
   "localizacao": "-23.552421596349273,-46.22403144836426",
-  "positivo": "0",
-  "negativo": "0",
+  "positivo": [],
+  "negativo": [],
   "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
 },
 {
@@ -36,8 +36,8 @@
   "oferta": 6.9,
   "unidade": "kg",
   "localizacao": "-23.54345170749638,-46.21124267578125",
-  "positivo": "0",
-  "negativo": "0",
+  "positivo": [],
+  "negativo": [],
   "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
 },
 {
@@ -50,8 +50,8 @@
   "oferta": 8.1,
   "unidade": "kg",
   "localizacao": "-23.543294335563015,-46.18429183959961",
-  "positivo": "0",
-  "negativo": "0",
+  "positivo": [],
+  "negativo": [],
   "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
 },
 {
@@ -64,8 +64,8 @@
   "oferta": 5,
   "unidade": "kg",
   "localizacao": "-23.52275568262954,-46.20746612548828",
-  "positivo": "0",
-  "negativo": "0",
+  "positivo": [],
+  "negativo": [],
   "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
 },
 {
@@ -78,8 +78,8 @@
   "oferta": 7.1,
   "unidade": "g",
   "localizacao": "-23.556119530236195,-46.21819496154785",
-  "positivo": "0",
-  "negativo": "0",
+  "positivo": [],
+  "negativo": [],
   "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
 },
 {
@@ -92,7 +92,7 @@
   "oferta": 24.9,
   "unidade": "kg",
   "localizacao": "-23.552421596349273,-46.22403144836426",
-  "positivo": "0",
-  "negativo": "0",
+  "positivo": [],
+  "negativo": [],
   "_class": "com.umc.pfc_fastprice.model.RegistroDeOferta"
 }]

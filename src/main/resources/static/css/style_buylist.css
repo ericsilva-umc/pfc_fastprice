@@ -257,12 +257,6 @@ header {
     font-weight: 700;
   }
   
-  .local-header {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
-  
   .actions-cell {
     display: flex;
     justify-content: flex-end;

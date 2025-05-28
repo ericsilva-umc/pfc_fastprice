@@ -26,19 +26,28 @@
                 <h2>Encontrou um produto com preço legal?</h2>
 
                 <button onclick="window.location.href = '/registrar-oferta'" class="btn btn-blue">Registre um produto!</button>
-
+                
                 <div class="divider"></div>
 
+                <span th:if="${param.termo != null and !#strings.isEmpty(param.termo)}">
+                    <h1 th:text='|Resultado de busca por "${param.termo}"|'></h1>
+                </span>
+                
+                <div class="d-flex justify-content-between">
+                    <form th:action="@{/}" method="GET" >
+                        <input name="termo" th:value="${param.termo}" hidden>
+                        <input type="text" class="form-control flex-grow-1" name="estabelecimento" placeholder="Buscar estabelecimento...">
+                        <input type="submit" hidden/>
+                    </form>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-arrow-down-up me-5"></i>
+                    </div>
+                </div>
+                
                 <!--Tabela de exibição dos registros de oferta-->
                 <table class="price-table">
-                    <tr class="table-header">
-                        <th class="header-cell">ESTABELECIMENTO</th>
-                        <th class="header-cell">PRODUTO</th>
-                        <th class="header-cell">PREÇO</th>
-                        <th class="header-cell">LOCALIZAÇÃO</th>
-                        <th class="header-cell">OPÇÕES</th>
-                    </tr>
                     <tr th:each="oferta : ${ofertas}" class="table-row">
+                        <td th:text="${#temporals.format(oferta.getRegistro().getDataRegistro(), 'dd/MM/yyyy')}" class="table-cell"></td>
                         <td th:text="${oferta.getEstabelecimento().getNome()}" class="table-cell"></td>
                         <td th:text="${oferta.getRegistro().getProduto()}" class="table-cell"></td>
                         <td th:text="${oferta.getRegistro().getOferta()} + '/' + ${oferta.getRegistro().getUnidade()}" class="table-cell"></td>
@@ -56,39 +65,49 @@
                                 
                             </div>
                         </td>
-                        <td class="rating-price">
+                        <td class="rating-price" th:attr="data-oferta-id=${oferta.getRegistro().getId()}">
                             <div sec:authorize="isAnonymous()" class="rating-item-wrapper" data-bs-toggle="tooltip"
                                  data-bs-placement="top" title="Entre para confirmar o preço!">
                                 <div class="rating-item">
                                     <i class="fa-regular fa-thumbs-up fs-4 up-icon" disabled></i>
-                                    <span class="up-count" th:text="${oferta.getRegistro().getPositivo()}"></span>
+                                    <span class="up-count" th:text="${oferta.getRegistro().getPositivo().size()}"></span>
                                 </div>
                             </div>
                             <div sec:authorize="isAnonymous()" class="rating-item-wrapper" data-bs-toggle="tooltip"
                                  data-bs-placement="top" title="Entre para não confirmar o preço!">
                                 <div class="rating-item">
                                     <i class="fa-regular fa-thumbs-down fs-4 down-icon" disabled></i>
-                                    <span class="down-count" th:text="${oferta.getRegistro().getNegativo()}"></span>
+                                    <span class="down-count" th:text="${oferta.getRegistro().getNegativo().size()}"></span>
                                 </div>
-                            </div> 
+                            </div>
                             <div sec:authorize="isAuthenticated()" class="rating-item-wrapper" data-bs-toggle="tooltip"
                                  data-bs-placement="top" title="Confirmar o preço">
                                 <div class="rating-item">
-                                    <i class="fa-regular fa-thumbs-up fs-4 up-icon"></i>
-                                    <span class="up-count" th:text="${oferta.getRegistro().getPositivo()}"></span>
+                                    <i class="fa-thumbs-up fs-4 up-icon" th:classappend="${oferta.getRegistro.getPositivo().contains(usuarioId)} ? ' fa-solid' : ' fa-regular'"
+                                       th:attr="onclick=|avaliar('${oferta.getRegistro.getId()}', 'positivo')|"></i>
+                                    <span class="up-count" th:text="${oferta.getRegistro().getPositivo().size()}"></span>
                                 </div>
                             </div>
                             <div sec:authorize="isAuthenticated()" class="rating-item-wrapper" data-bs-toggle="tooltip"
                                  data-bs-placement="top" title="Não confirmar o preço">
                                 <div class="rating-item">
-                                    <i class="fa-regular fa-thumbs-down fs-4 down-icon"></i>
-                                    <span class="down-count" th:text="${oferta.getRegistro().getNegativo()}"></span>
+                                    <i class="fa-thumbs-down fs-4 down-icon" th:classappend="${oferta.getRegistro.getNegativo().contains(usuarioId)} ? ' fa-solid' : ' fa-regular'"
+                                       th:attr="onclick=|avaliar('${oferta.getRegistro.getId()}', 'negativo')|"></i>
+                                    <span class="down-count" th:text="${oferta.getRegistro().getNegativo().size()}"></span>
                                 </div>
                             </div>
                         </td>
                     </tr>
                 </table>
 
+                <div class="d-flex justify-content-center">
+                    <a th:if="${paginaAtual > 0}" th:href="@{/(page=${paginaAtual - 1}, size=10, termo=${param.termo}, estabelecimento=${param.estabelecimento})}">&lt;&lt;&lt;</a>
+
+                    &nbsp;<span>Página <span th:text="${paginaAtual + 1}"></span> de <span th:text="${totalPaginas}"></span></span>&nbsp;
+
+                    <a th:if="${paginaAtual + 1 < totalPaginas}" th:href="@{/(page=${paginaAtual + 1}, size=10, termo=${param.termo}, estabelecimento=${param.estabelecimento})}">>>></a>
+                </div>
+                
                 <!--Modal para o mapa da API do Google Maps-->
                 <div id="modalMapa" style="display:none; position:fixed; top:10%; left:30%; width:40%; height:80%; background:white; border:1px solid #ccc; z-index:9999;">
                     <button onclick="fecharMapa()">Fechar</button>
@@ -125,50 +144,64 @@
         </div>
 
         <script sec:authorize="isAuthenticated()">
+            function avaliar(ofertaId, tipo) {
+                fetch('/registrodeoferta/avaliar/' + ofertaId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tipo: tipo
+                    })
+                });
+            }
+            
             document.addEventListener('DOMContentLoaded', function () {
+                const ofertas = document.querySelectorAll('.rating-price');
 
-                // Logic for like/dislike icons
-                const thumbsUpIcons = document.querySelectorAll('.up-icon');
-                const thumbsDownIcons = document.querySelectorAll('.down-icon');
+                ofertas.forEach(oferta => {
+                    const upIcon = oferta.querySelector('.up-icon');
+                    const downIcon = oferta.querySelector('.down-icon');
+                    const contadorPositivo = oferta.querySelector('.up-count');
+                    const contadorNegativo = oferta.querySelector('.down-count');
 
-                thumbsUpIcons.forEach(icon => {
-                    icon.addEventListener('click', function () {
-                        // Navega para o wrapper pai, depois para o wrapper irmão e então encontra o down-icon
-                        const downIconWrapper = this.closest('.rating-item-wrapper').nextElementSibling;
-                        const downIcon = downIconWrapper ? downIconWrapper.querySelector('.down-icon') : null;
+                    upIcon.addEventListener('click', function () {
+                        const isSelecionado = upIcon.classList.contains('fa-solid');
 
-                        if (this.classList.contains('fa-regular')) {
-                            this.classList.remove('fa-regular');
-                            this.classList.add('fa-solid');
+                        if (!isSelecionado) {
+                            upIcon.classList.remove('fa-regular');
+                            upIcon.classList.add('fa-solid');
+                            contadorPositivo.textContent = parseInt(contadorPositivo.textContent) + 1;
 
-                            if (downIcon && downIcon.classList.contains('fa-solid')) {
+                            if (downIcon.classList.contains('fa-solid')) {
                                 downIcon.classList.remove('fa-solid');
                                 downIcon.classList.add('fa-regular');
+                                contadorNegativo.textContent = parseInt(contadorNegativo.textContent) - 1;
                             }
                         } else {
-                            this.classList.remove('fa-solid');
-                            this.classList.add('fa-regular');
+                            upIcon.classList.remove('fa-solid');
+                            upIcon.classList.add('fa-regular');
+                            contadorPositivo.textContent = parseInt(contadorPositivo.textContent) - 1;
                         }
                     });
-                });
 
-                thumbsDownIcons.forEach(icon => {
-                    icon.addEventListener('click', function () {
-                        // Navega para o wrapper pai, depois para o wrapper irmão e então encontra o up-icon
-                        const upIconWrapper = this.closest('.rating-item-wrapper').previousElementSibling;
-                        const upIcon = upIconWrapper ? upIconWrapper.querySelector('.up-icon') : null;
+                    downIcon.addEventListener('click', function () {
+                        const isSelecionado = downIcon.classList.contains('fa-solid');
 
-                        if (this.classList.contains('fa-regular')) {
-                            this.classList.remove('fa-regular');
-                            this.classList.add('fa-solid');
+                        if (!isSelecionado) {
+                            downIcon.classList.remove('fa-regular');
+                            downIcon.classList.add('fa-solid');
+                            contadorNegativo.textContent = parseInt(contadorNegativo.textContent) + 1;
 
-                            if (upIcon && upIcon.classList.contains('fa-solid')) {
+                            if (upIcon.classList.contains('fa-solid')) {
                                 upIcon.classList.remove('fa-solid');
                                 upIcon.classList.add('fa-regular');
+                                contadorPositivo.textContent = parseInt(contadorPositivo.textContent) - 1;
                             }
                         } else {
-                            this.classList.remove('fa-solid');
-                            this.classList.add('fa-regular');
+                            downIcon.classList.remove('fa-solid');
+                            downIcon.classList.add('fa-regular');
+                            contadorNegativo.textContent = parseInt(contadorNegativo.textContent) - 1;
                         }
                     });
                 });

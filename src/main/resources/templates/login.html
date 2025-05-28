@@ -20,10 +20,15 @@
                 <form th:action="@{/login}" method="POST">
                     <input type="email" name="email" id="email" class="input-field" placeholder="Digite seu e-mail" required>
                     <input type="password" name="senha" id="senha" class="input-field" placeholder="Digite sua senha" required>
+                    
+                    <div th:if="${param.error}">
+                        <p class="error">Usuário ou senha inválidos!</p>
+                    </div>
+                    
                     <button type="submit" class="btn btn-primary">Entrar</button>
                 </form>
                 
-                <a th:href="@{/redefinir}" class="forget-password">Esqueceu sua senha?</a>
+                <a th:href="@{/esqueceu-senha}" class="forget-password">Esqueceu sua senha?</a>
                 
                 <div class="divider"></div>
                 

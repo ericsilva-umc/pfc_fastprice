@@ -41,6 +41,12 @@ public class UsuarioService {
     public void atualizarUsuario(Usuario usuario) {
         usuarioRepository.save(usuario);
     }
+    
+    // Método da service que utiliza o repository para atualizar a senha do usuário
+    public void atualizarSenha(Usuario usuario, String novaSenha) {
+        usuario.setSenha(passwordEncoder.encode(novaSenha)); // Encriptografa a senha antes de salvar no banco de dados
+        usuarioRepository.save(usuario);
+    }
 
     // Método da service que utiliza o repository para deletar o registro de um usuário
     public void deletarUsuario(String id) {

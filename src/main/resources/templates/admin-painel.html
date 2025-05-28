@@ -155,7 +155,9 @@
                                             <input name="unidade" th:value="${oferta.getUnidade()}" class="form-control" required>
                                         </td>
                                         <td>
-                                            <input name="localizacao" th:value="${oferta.getLocalizacao()}" class="form-control" required>
+                                            <input name="localizacao" th:value="${oferta.getLocalizacao()}" hidden>
+                                            <button type="button" class="btn btn-location" data-bs-toggle="modal"
+                                                    data-bs-target="#locationModal" data-store="local" th:attr="onclick=|initMap(this)|">Localização</button>
                                         </td>
                                         <td class="col-md-1">
                                             <button class="btn action-btn edit-btn" type="submit">
@@ -275,6 +277,46 @@
             </div>
         </div>
 
+        <!-- Modal Map -->
+        <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="locationModalLabel">
+                            Selecione a Localização
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group search-location-input">
+                            <input type="text" class="form-control" id="searchAddress" placeholder="Buscar endereço..." />
+                            <button class="btn btn-orange" id="searchButton">Buscar</button>
+                        </div>
+
+                        <div class="map-container">
+                            <div class="map-instructions">
+                                <p><strong>Clique no mapa</strong> para selecionar a localização do estabelecimento.</p>
+                            </div>
+                            <div id="interactiveMap" style="height: 100%; width: 100%"></div>
+                        </div>
+
+                        <div class="location-info" id="locationInfo">
+                            <p class="location-address" id="selectedAddress"></p>
+                            <p id="selectedCoordinates"></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="button" class="btn btn-blue" id="confirmLocation" disabled>
+                            Confirmar Localização
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Modal Add Establishment  -->
         <div class="modal fade" id="addEstabelecimentoModal" tabindex="-1" aria-labelledby="addEstabelecimentoModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -299,6 +341,165 @@
             </div>
         </div>
         <script>
+            let map;
+            let marker;
+            let geocoder;
+            let currentStore = "";
+            let selectedLocation = null;
+            let currentForm = null;
+            let inputHidden = null;
+
+            function initMap(botao) {
+                inputHidden = botao.closest("td").querySelector('input[name="localizacao"]');
+
+                const pos = inputHidden.value.split(",");
+                const latLng = new google.maps.LatLng(pos[0], pos[1]);
+                const initialPosition = {
+                    lat: parseFloat(pos[0]),
+                    lng: parseFloat(pos[1])
+                };
+
+                map = new google.maps.Map(document.getElementById("interactiveMap"), {
+                    center: initialPosition,
+                    zoom: 13,
+                    mapTypeControl: true,
+                    streetViewControl: true,
+                    fullscreenControl: true
+                });
+
+                // Geocode 
+                geocoder = new google.maps.Geocoder();
+
+                placeMarker(latLng);
+
+                // Click Event 
+                map.addListener("click", (event) => {
+                    placeMarker(event.latLng);
+                });
+
+                // Search Address
+                document
+                        .getElementById("searchButton")
+                        .addEventListener("click", () => {
+                            searchAddress();
+                        });
+
+                // EnterKey Search
+                document
+                        .getElementById("searchAddress")
+                        .addEventListener("keypress", (event) => {
+                            if (event.key === "Enter") {
+                                searchAddress();
+                            }
+                        });
+
+                // Confirm Address
+                document
+                        .getElementById("confirmLocation")
+                        .addEventListener("click", () => {
+                            if (selectedLocation) {
+                                saveLocation(selectedLocation);
+
+                                // Fechar o modal
+                                const modal = bootstrap.Modal.getInstance(
+                                        document.getElementById("locationModal")
+                                        );
+                                modal.hide();
+
+                                // Mostrar mensagem de sucesso
+                                alert(`Localização para ${currentStore} salva com sucesso!`);
+                            }
+                        });
+            }
+
+            // PlaceMarker
+            function placeMarker(location) {
+                // Remove old marker
+                if (marker) {
+                    marker.setMap(null);
+                }
+
+                // Create new marker
+                marker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    draggable: true,
+                    animation: google.maps.Animation.DROP
+                });
+
+                // Center on marker
+                map.panTo(location);
+
+                // Get Addres w/ geocode
+                geocodePosition(location);
+
+                // Move marker and get final address
+                marker.addListener("dragend", () => {
+                    geocodePosition(marker.getPosition());
+                });
+            }
+
+            // Get address from coordinates
+            function geocodePosition(position) {
+                geocoder.geocode({
+                    location: position
+                }, (results, status) => {
+                    if (status === "OK" && results[0]) {
+                        // Store location
+                        selectedLocation = {
+                            lat: position.lat(),
+                            lng: position.lng(),
+                            address: results[0].formatted_address
+                        };
+
+                        // Show location
+                        document.getElementById("locationInfo").style.display = "block";
+                        document.getElementById("selectedAddress").textContent =
+                                results[0].formatted_address;
+                        document.getElementById(
+                                "selectedCoordinates"
+                                ).textContent = `Latitude: ${position
+                                .lat()
+                                .toFixed(6)}, Longitude: ${position.lng().toFixed(6)}`;
+
+                        // ConfirmButton
+                        document.getElementById("confirmLocation").disabled = false;
+                    } else {
+                        console.error("Geocoder falhou devido a: " + status);
+                        document.getElementById("selectedAddress").textContent =
+                                "Endereço não encontrado";
+                        document.getElementById(
+                                "selectedCoordinates"
+                                ).textContent = `Latitude: ${position
+                                .lat()
+                                .toFixed(6)}, Longitude: ${position.lng().toFixed(6)}`;
+                    }
+                });
+            }
+
+            // Search w/ button
+            function searchAddress() {
+                const address = document.getElementById("searchAddress").value;
+
+                if (address) {
+                    geocoder.geocode({
+                        address: address
+                    }, (results, status) => {
+                        if (status === "OK" && results[0]) {
+                            // Colocar marcador na localização encontrada
+                            placeMarker(results[0].geometry.location);
+                        } else {
+                            alert("Endereço não encontrado: " + status);
+                        }
+                    });
+                }
+            }
+            
+            // Save location
+            function saveLocation(location) {            
+                inputHidden.value = location.lat + "," + location.lng;
+            }
+            
             function confirmAction(message) {
                 return confirm(message);
             }
@@ -324,7 +525,7 @@
                 });
 
                 // Initial setup of action button listeners
-                addActionButtonListeners();
+                // addActionButtonListeners();
             });
         </script>
 
@@ -340,5 +541,6 @@
                 ;
             });
         </script>
+        <script async defer th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${apiGoogleMaps} + '&libraries=places'}"></script>
     </body>
 </html>

@@ -43,19 +43,8 @@
                                 </ul>
 
                                 <!-- Enviar informação -->
-                                <input type="hidden" 
-                                       class="form-control custom-input" 
-                                       name="estabelecimentoId" 
-                                       id="estabelecimentoId" 
-                                       required>
+                                <input type="hidden" class="form-control custom-input" name="estabelecimentoId" id="estabelecimentoId" required>
                             </div>
-                            <!-- <div class="mb-3">
-                                <select class="form-control custom-input" name="estabelecimentoId" required>
-                                    <option value="" selected disabled>Selecione o estabelecimento</option>
-                                    <option th:each="estabelecimento : ${estabelecimentos}" th:value="${estabelecimento.getId()}"
-                                            th:text="${estabelecimento.getNome()}"></option>
-                                </select>
-                            </div>-->
                             <!-- Product Name -->
                             <div class="mb-3">
                                 <input type="text" class="form-control custom-input" name="produto" placeholder="Digite o nome do produto" required>
@@ -188,8 +177,7 @@
                     .getElementById("confirmLocation")
                     .addEventListener("click", () => {
                         if (selectedLocation) {
-                            saveLocation(currentStore, selectedLocation);
-                            console.log(selectedLocation.lat + "," + selectedLocation.lng);
+                            saveLocation(selectedLocation);
 
                             // Fechar o modal
                             const modal = bootstrap.Modal.getInstance(
@@ -230,7 +218,7 @@
             });
         }
 
-        // Get addres from coordinates
+        // Get address from coordinates
         function geocodePosition(position) {
             geocoder.geocode({
                 location: position
@@ -306,28 +294,8 @@
         });
 
         // Save location
-        function saveLocation(store, location) {
+        function saveLocation(location) {
             document.getElementById("locationValue").value = location.lat + "," + location.lng;
-
-            /*
-             fetch('/api/locations', {
-             method: 'POST',
-             headers: {
-             'Content-Type': 'application/json',
-             },
-             body: JSON.stringify({
-             store: store,
-             location: location
-             }),
-             })
-             .then(response => response.json())
-             .then(data => {
-             console.log('Success:', data);
-             })
-             .catch((error) => {
-             console.error('Error:', error);
-             });
-             */
         }
     </script>
     <script async defer th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${apiGoogleMaps} + '&libraries=places&callback=initMap'}"></script>

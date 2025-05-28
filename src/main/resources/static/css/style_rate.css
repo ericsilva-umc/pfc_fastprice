@@ -49,6 +49,10 @@ header {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.search-input:hover {
+  cursor: url("../imgs/search-icon.png"), auto;
+}
+
 .search-icon {
   position: absolute;
   left: 15px;
@@ -119,7 +123,7 @@ header {
 }
 
 .tooltip-inner {
-  background-color: #ff5722;
+  background-color: #0168b3;
   color: white;
   padding: 5px 10px;
   border-radius: 0.25rem;
@@ -127,7 +131,7 @@ header {
 
 .tooltip.bs-tooltip-auto[data-popper-placement^="right"] .tooltip-arrow::before,
 .tooltip.bs-tooltip-right .tooltip-arrow::before {
-  border-right-color: #ff5722 !important;
+  border-right-color: #0168b3 !important;
 }
 
 /* Rating Card Styles */
@@ -162,7 +166,7 @@ header {
 
 /* Scrollbar for dropdown  */
 .dropdown-menu {
-  max-height: 200px;
+  max-height: 265px;
   overflow-y: auto;
 }
 

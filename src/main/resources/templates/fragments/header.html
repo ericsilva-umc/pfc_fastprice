@@ -6,7 +6,9 @@
         </a>
         <div class="search-container">
             <img src="/imgs/search.png" alt="Buscar" class="search-icon" width="20">
-            <input type="text" class="search-input" placeholder="Pesquise por um item ou supermercado...">
+            <form th:action="@{/}" method="GET">
+                <input type="text" name="termo" class="search-input" placeholder="Pesquise por um item...">
+            </form>
         </div>
         <div sec:authorize="isAnonymous()">
             <div class="auth-container">

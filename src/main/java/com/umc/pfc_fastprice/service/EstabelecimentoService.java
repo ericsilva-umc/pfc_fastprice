@@ -33,6 +33,11 @@ public class EstabelecimentoService {
         return estabelecimentoRepository.findById(id).orElse(null);
     }
     
+    // Método da service que utiliza o repository para buscar estabelecimentos que contenham um nome específico
+    public List<Estabelecimento> buscarEstabelecimentosPorNome(String nome) {
+        return estabelecimentoRepository.findByNomeContainingIgnoreCase(nome);
+    }
+    
     // Método da service que utiliza o repository para deletar o registro de um usuário
     public void deletarEstabelecimento(String id) {
 	estabelecimentoRepository.deleteById(id);

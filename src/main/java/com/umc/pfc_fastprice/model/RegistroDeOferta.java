@@ -1,7 +1,11 @@
 package com.umc.pfc_fastprice.model;
 
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,8 +20,10 @@ public class RegistroDeOferta {
     private double oferta;
     private String unidade;
     private String localizacao;
-    private String positivo;
-    private String negativo;
+    private List<String> positivo = new ArrayList<>();
+    private List<String> negativo = new ArrayList<>();
+    @CreatedDate
+    private LocalDateTime dataRegistro;
 
     //<editor-fold defaultstate="collapsed" desc="Get/Set">
     public String getId() {
@@ -80,21 +86,29 @@ public class RegistroDeOferta {
     public void setLocalizacao(String localizacao) {
         this.localizacao = localizacao;
     }
-
-    public String getPositivo() {
+    
+    public List<String> getPositivo() {
         return positivo;
     }
 
-    public void setPositivo(String positivo) {
+    public void setPositivo(List<String> positivo) {
         this.positivo = positivo;
     }
 
-    public String getNegativo() {
+    public List<String> getNegativo() {
         return negativo;
     }
 
-    public void setNegativo(String negativo) {
+    public void setNegativo(List<String> negativo) {
         this.negativo = negativo;
+    }
+        
+    public LocalDateTime getDataRegistro() {
+        return dataRegistro;
+    }
+
+    public void setDataRegistro(LocalDateTime dataRegistro) {
+        this.dataRegistro = dataRegistro;
     }
     //</editor-fold>
 }
