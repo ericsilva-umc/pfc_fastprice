@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>FastPrice - Endereço Cadastrado</title>
+        <link rel="icon" type="image/png" href="imgs/cart.png">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/style_registered_address.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <!--Inclui o header da página-->
+            <header th:replace="~{fragments/header :: header}"></header>
+
+            <!-- Address Card -->
+            <div class="full-addres-card mt-5">
+                <div class="address-card">
+                    <h1 class="text-center mb-4 fw-bold">Endereço Cadastrado</h1>
+                    <hr class="my-3">
+                    <div class="address-info">
+                        <p class="address-street-number">
+                            <span th:text="${endereco.getRua()}" class="fs-5 text-white" id="addressStreet">Rua</span>, <span
+                                th:text="${endereco.getNumero()}" class="fs-5 text-white" id="addressNumber">Número</span>
+                        </p>
+                        <p class="address-location" id="addressLocation">
+                            <span th:text="${endereco.getCidade()}" id="addressCity">Cidade</span> - <span th:text="${endereco.getEstado()}" id="addresState">Estado</span>
+                        </p>
+                        <p th:text="${endereco.getCep()}" class="address-cep" id="addressCep">CEP</p> <!-- Exibindo o CEP -->
+                    </div>
+                    <div class="text-end mt-3">
+                        <button class="btn-edit" data-bs-toggle="modal" data-bs-target="#editAddressModal">Editar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editAddressModalLabel">Editar Endereço</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addressForm">
+                                <div class="mb-3">
+                                    <label for="inputStreet" class="form-label">Rua</label>
+                                    <input type="text" class="form-control" id="inputStreet" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="inputNumber" class="form-label">Número</label>
+                                    <input type="text" class="form-control" id="inputNumber" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="inputCep" class="form-label">CEP</label>
+                                    <input type="text" class="form-control" id="inputCep" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="inputCity" class="form-label">Cidade</label>
+                                    <input type="text" class="form-control" id="inputCity" required disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="inputState" class="form-label">Estado</label>
+                                    <input type="text" class="form-control" id="inputState" required disabled>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary" id="saveAddress">Salvar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Elementos do endereço no cartão
+                    const addressStreet = document.getElementById('addressStreet');
+                    const addressNumber = document.getElementById('addressNumber');
+                    const addressCity = document.getElementById('addressCity');
+                    const addressState = document.getElementById('addresState');
+                    const addressCep = document.getElementById('addressCep');
+
+                    // Elementos do formulário
+                    const inputStreet = document.getElementById('inputStreet');
+                    const inputNumber = document.getElementById('inputNumber');
+                    const inputCity = document.getElementById('inputCity');
+                    const inputState = document.getElementById('inputState');
+                    const inputCep = document.getElementById('inputCep');
+                    const saveButton = document.getElementById('saveAddress');
+
+                    // Modal Bootstrap
+                    const editModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
+
+                    // Função para formatar o CEP
+                    function formatCep(cep) {
+                        return cep.replace(/\D/g, '') // Remove caracteres não numéricos
+                                .replace(/(\d{5})(\d{3})/, '$1-$2'); // Formata o CEP para xxxxx-xxx
+                    }
+
+                    // Preencher o formulário quando o modal for aberto
+                    document.getElementById('editAddressModal').addEventListener('show.bs.modal', function () {
+                        const streetAndNumber = addressStreet.textContent.split(',');
+                        inputStreet.value = streetAndNumber[0].trim();  // Preenche o nome da rua
+                        inputNumber.value = addressNumber.textContent.trim(); // Preenche o número
+
+                        inputCity.value = addressCity.textContent.trim(); // Preenche a cidade
+                        inputState.value = addressState.textContent.trim(); // Preenche o estado
+
+                        const cep = addressCep.textContent.replace('CEP', '').trim(); // Remove "CEP" do texto
+                        inputCep.value = cep; // Preenche o CEP
+                    });
+
+                    // Formatando o CEP enquanto o usuário digita na modal
+                    inputCep.addEventListener('input', function () {
+                        let cep = this.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+
+                        if (cep.length > 5) {
+                            cep = cep.slice(0, 5) + '-' + cep.slice(5, 8); // Adiciona o hífen no lugar correto
+                        }
+
+                        this.value = cep; // Atualiza o valor do input com a formatação
+                    });
+
+                    // Função para formatar o CEP exibido no card
+                    function updateFormattedCep() {
+                        const rawCep = addressCep.textContent.trim().replace('CEP', '').trim(); // Remove "CEP" e formata
+                        const formattedCep = formatCep(rawCep); // Formata o CEP
+                        addressCep.textContent = 'CEP ' + formattedCep; // Atualiza o texto do CEP no card
+                    }
+
+                    // Chamar a formatação do CEP ao carregar a página
+                    updateFormattedCep();
+
+                    // Buscar dados de cidade e estado do ViaCEP
+                    inputCep.addEventListener('blur', function () {
+                        const cep = inputCep.value.replace(/\D/g, ''); // Remover qualquer caractere não numérico
+
+                        if (cep.length === 8) {
+                            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.erro) {
+                                            showAlert('CEP não encontrado!', 'danger');
+                                        } else {
+                                            // Atualizar os campos de rua, cidade e estado
+                                            inputStreet.value = data.logradouro; // Atualiza a rua
+                                            inputCity.value = data.localidade; // Atualiza a cidade
+                                            inputState.value = data.uf; // Atualiza o estado
+
+                                            // Atualizar o cartão de endereço também
+                                            addressStreet.textContent = data.logradouro;
+                                            addressNumber.textContent = inputNumber.value; // Mantém o número atual
+                                            addressCity.textContent = data.localidade;
+                                            addressState.textContent = data.uf;
+                                            addressCep.textContent = 'CEP ' + formatCep(data.cep); // Formata e atualiza o CEP
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Erro ao buscar CEP:', error);
+                                        alert('Erro ao buscar CEP.');
+                                    });
+                        }
+                    });
+                    // Salvar as alterações quando o botão Salvar for clicado
+                    saveButton.addEventListener('click', function () {
+                        if (inputStreet.value && inputCity.value && inputCep.value && inputNumber.value && inputState.value) {
+                            // Atualizar o cartão de endereço
+                            addressStreet.textContent = inputStreet.value; // Atualiza apenas a rua
+                            addressNumber.textContent = inputNumber.value; // Atualiza o número separadamente
+                            addressCity.textContent = inputCity.value;
+                            addressState.textContent = inputState.value;
+                            addressCep.textContent = 'CEP ' + formatCep(inputCep.value); // Formata o CEP antes de salvar
+
+                            // Fechar o modal
+                            editModal.hide();
+
+                            const addressUpdated = {
+                                cep: formatCep(inputCep.value),
+                                rua: inputStreet.value,
+                                numero: inputNumber.value,
+                                cidade: inputCity.value,
+                                estado: inputState.value
+                            };
+                            
+                            fetch('/endereco/atualizar', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(addressUpdated)
+                            }).then(response => {
+                                if (response.ok) {
+                                    showAlert('Endereço atualizado com sucesso!', 'success');
+                                }
+                            });
+                        } else {
+                            showAlert('Por favor, preencha todos os campos.', 'danger');
+                        }
+                    });
+
+                    // Função para mostrar alertas
+                    function showAlert(message, type) {
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+                        alertDiv.setAttribute('role', 'alert');
+                        alertDiv.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                `;
+
+                        document.body.appendChild(alertDiv);
+
+                        setTimeout(() => {
+                            alertDiv.remove();
+                        }, 3000);
+                    }
+                });
+            </script>
+    </body>
+</html>

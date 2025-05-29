@@ -1,0 +1,77 @@
+[{
+  "_id": {
+    "$oid": "6820ce16a0dd1bbfb9bb4c6b"
+  },
+  "nome": "Bom Preço",
+  "_class": "com.umc.pfc_fastprice.model.Estabelecimento"
+},
+{
+  "_id": {
+    "$oid": "6820ce1ea0dd1bbfb9bb4c6c"
+  },
+  "nome": "Veran",
+  "_class": "com.umc.pfc_fastprice.model.Estabelecimento"
+},
+{
+  "_id": {
+    "$oid": "6820ce27a0dd1bbfb9bb4c6d"
+  },
+  "nome": "Extra",
+  "_class": "com.umc.pfc_fastprice.model.Estabelecimento"
+},
+{
+  "_id": {
+    "$oid": "6820ce2fa0dd1bbfb9bb4c6e"
+  },
+  "nome": "Nagumo",
+  "_class": "com.umc.pfc_fastprice.model.Estabelecimento"
+},
+{
+  "_id": {
+    "$oid": "6820ce3ba0dd1bbfb9bb4c6f"
+  },
+  "nome": "Maktubi",
+  "_class": "com.umc.pfc_fastprice.model.Estabelecimento"
+},
+{
+  "_id": {
+    "$oid": "6820ce46a0dd1bbfb9bb4c70"
+  },
+  "nome": "Graça",
+  "_class": "com.umc.pfc_fastprice.model.Estabelecimento"
+},
+{
+  "_id": {
+    "$oid": "6820ce4ea0dd1bbfb9bb4c71"
+  },
+  "nome": "Semar",
+  "_class": "com.umc.pfc_fastprice.model.Estabelecimento"
+},
+{
+  "_id": {
+    "$oid": "6820ce59a0dd1bbfb9bb4c72"
+  },
+  "nome": "Comercial Esperança",
+  "_class": "com.umc.pfc_fastprice.model.Estabelecimento"
+},
+{
+  "_id": {
+    "$oid": "6820ce62a0dd1bbfb9bb4c73"
+  },
+  "nome": "Assai",
+  "_class": "com.umc.pfc_fastprice.model.Estabelecimento"
+},
+{
+  "_id": {
+    "$oid": "6820ce6da0dd1bbfb9bb4c74"
+  },
+  "nome": "Shibata",
+  "_class": "com.umc.pfc_fastprice.model.Estabelecimento"
+},
+{
+  "_id": {
+    "$oid": "6820ce74a0dd1bbfb9bb4c75"
+  },
+  "nome": "Rimar",
+  "_class": "com.umc.pfc_fastprice.model.Estabelecimento"
+}]

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fast Price - Comparação de Preços</title>
+        <link rel="icon" type="image/png" href="imgs/cart.png">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/style_index.css">
+        <link rel="stylesheet" href="/css/style_indexlogged.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <!--Inclui o header da página-->
+            <header th:replace="~{fragments/header :: header}"></header>
+
+            <div class="main-content">
+                <h2>Encontrou um produto com preço legal?</h2>
+
+                <button onclick="window.location.href = '/registrar-oferta'" class="btn btn-blue">Registre um produto!</button>
+                
+                <div class="divider"></div>
+
+                <span th:if="${param.termo != null and !#strings.isEmpty(param.termo)}">
+                    <h1 th:text='|Resultado de busca por "${param.termo}"|'></h1>
+                </span>
+                
+                <div class="d-flex justify-content-between">
+                    <form th:action="@{/}" method="GET" >
+                        <input name="termo" th:value="${param.termo}" hidden>
+                        <input type="text" class="form-control flex-grow-1" name="estabelecimento" placeholder="Buscar estabelecimento...">
+                        <input type="submit" hidden/>
+                    </form>
+                </div>
+                
+                <!--Tabela de exibição dos registros de oferta-->
+                <table class="price-table">
+                    <tr th:each="oferta : ${ofertas}" class="table-row">
+                        <td th:text="${#temporals.format(oferta.getRegistro().getDataRegistro(), 'dd/MM/yyyy')}" class="table-cell"></td>
+                        <td th:text="${oferta.getEstabelecimento().getNome()}" class="table-cell"></td>
+                        <td th:text="${oferta.getRegistro().getProduto()}" class="table-cell"></td>
+                        <td th:text="${oferta.getRegistro().getOferta()} + '/' + ${oferta.getRegistro().getUnidade()}" class="table-cell"></td>
+                        <td class="table-cell-btn">
+                            <button th:attr="onclick=|abrirMapa('${oferta.getRegistro().getLocalizacao()}')|" type="button" class="location-btn">Ver Localização</button>
+                            <div sec:authorize="isAnonymous()" class="list-item-wrapper" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" title="Entre para salvar o preço na sua lista!">
+                                <button class="btn list-btn fa-solid fa-basket-shopping fs-5" disabled></button>
+                            </div>
+                            <div sec:authorize="isAuthenticated()" class="list-item-wrapper" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" title="Salvar na lista de compras">
+                                <form th:action="@{/lista/adicionar/} + ${oferta.getRegistro().getId()}" method="POST">
+                                    <button type="submit" class="btn list-btn fa-solid fa-basket-shopping fs-5"></button>
+                                </form>
+                                
+                            </div>
+                        </td>
+                        <td class="rating-price" th:attr="data-oferta-id=${oferta.getRegistro().getId()}">
+                            <div sec:authorize="isAnonymous()" class="rating-item-wrapper" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" title="Entre para confirmar o preço!">
+                                <div class="rating-item">
+                                    <i class="fa-regular fa-thumbs-up fs-4 up-icon" disabled></i>
+                                    <span class="up-count" th:text="${oferta.getRegistro().getPositivo().size()}"></span>
+                                </div>
+                            </div>
+                            <div sec:authorize="isAnonymous()" class="rating-item-wrapper" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" title="Entre para não confirmar o preço!">
+                                <div class="rating-item">
+                                    <i class="fa-regular fa-thumbs-down fs-4 down-icon" disabled></i>
+                                    <span class="down-count" th:text="${oferta.getRegistro().getNegativo().size()}"></span>
+                                </div>
+                            </div>
+                            <div sec:authorize="isAuthenticated()" class="rating-item-wrapper" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" title="Confirmar o preço">
+                                <div class="rating-item">
+                                    <i class="fa-thumbs-up fs-4 up-icon" th:classappend="${oferta.getRegistro.getPositivo().contains(usuarioId)} ? ' fa-solid' : ' fa-regular'"
+                                       th:attr="onclick=|avaliar('${oferta.getRegistro.getId()}', 'positivo')|"></i>
+                                    <span class="up-count" th:text="${oferta.getRegistro().getPositivo().size()}"></span>
+                                </div>
+                            </div>
+                            <div sec:authorize="isAuthenticated()" class="rating-item-wrapper" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" title="Não confirmar o preço">
+                                <div class="rating-item">
+                                    <i class="fa-thumbs-down fs-4 down-icon" th:classappend="${oferta.getRegistro.getNegativo().contains(usuarioId)} ? ' fa-solid' : ' fa-regular'"
+                                       th:attr="onclick=|avaliar('${oferta.getRegistro.getId()}', 'negativo')|"></i>
+                                    <span class="down-count" th:text="${oferta.getRegistro().getNegativo().size()}"></span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <span th:if="${totalPaginas == 0}">
+                    <h1>Nenhum resultado.</h1>
+                </span>
+                
+                <div th:if="${totalPaginas != 0}"class="d-flex justify-content-center">
+                    <a th:if="${paginaAtual > 0}" th:href="@{/(page=${paginaAtual - 1}, size=10, termo=${param.termo}, estabelecimento=${param.estabelecimento})}">&lt;&lt;&lt;</a>
+
+                    &nbsp;<span>Página <span th:text="${paginaAtual + 1}"></span> de <span th:text="${totalPaginas}"></span></span>&nbsp;
+
+                    <a th:if="${paginaAtual + 1 < totalPaginas}" th:href="@{/(page=${paginaAtual + 1}, size=10, termo=${param.termo}, estabelecimento=${param.estabelecimento})}">>>></a>
+                </div>
+                
+                <!--Modal para o mapa da API do Google Maps-->
+                <div id="modalMapa" style="display:none; position:fixed; top:10%; left:30%; width:40%; height:80%; background:white; border:1px solid #ccc; z-index:9999;">
+                    <button onclick="fecharMapa()">Fechar</button>
+                    <div id="mapa" style="width:100%; height:90%;"></div>
+                </div>
+
+                <!--JavaScript para a definição dos métodos para abrir e fechar o mapa-->
+                <script>
+                    let mapa;
+                    let marcador;
+
+                    function abrirMapa(localizacao) {
+                        document.getElementById('modalMapa').style.display = 'block';
+
+                        const string = localizacao.split(',');
+                        const lat = parseFloat(string[0]);
+                        const lng = parseFloat(string[1]);
+                        const posicao = {lat: lat, lng: lng};
+
+                        mapa = new google.maps.Map(document.getElementById('mapa'), {center: posicao, zoom: 15, mapId: "mapa"});
+                        marcador = new google.maps.marker.AdvancedMarkerElement({position: posicao, map: mapa});
+                    }
+
+                    function fecharMapa() {
+                        document.getElementById('modalMapa').style.display = 'none';
+                        mapa = null;
+                        marcador = null;
+                    }
+                </script>
+
+                <!--Carrega a chave API do Google Maps-->
+                <script async defer th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${apiGoogleMaps} + '&libraries=marker'}"></script>
+            </div>
+        </div>
+
+        <script sec:authorize="isAuthenticated()">
+            function avaliar(ofertaId, tipo) {
+                fetch('/registrodeoferta/avaliar/' + ofertaId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tipo: tipo
+                    })
+                });
+            }
+            
+            document.addEventListener('DOMContentLoaded', function () {
+                const ofertas = document.querySelectorAll('.rating-price');
+
+                ofertas.forEach(oferta => {
+                    const upIcon = oferta.querySelector('.up-icon');
+                    const downIcon = oferta.querySelector('.down-icon');
+                    const contadorPositivo = oferta.querySelector('.up-count');
+                    const contadorNegativo = oferta.querySelector('.down-count');
+
+                    upIcon.addEventListener('click', function () {
+                        const isSelecionado = upIcon.classList.contains('fa-solid');
+
+                        if (!isSelecionado) {
+                            upIcon.classList.remove('fa-regular');
+                            upIcon.classList.add('fa-solid');
+                            contadorPositivo.textContent = parseInt(contadorPositivo.textContent) + 1;
+
+                            if (downIcon.classList.contains('fa-solid')) {
+                                downIcon.classList.remove('fa-solid');
+                                downIcon.classList.add('fa-regular');
+                                contadorNegativo.textContent = parseInt(contadorNegativo.textContent) - 1;
+                            }
+                        } else {
+                            upIcon.classList.remove('fa-solid');
+                            upIcon.classList.add('fa-regular');
+                            contadorPositivo.textContent = parseInt(contadorPositivo.textContent) - 1;
+                        }
+                    });
+
+                    downIcon.addEventListener('click', function () {
+                        const isSelecionado = downIcon.classList.contains('fa-solid');
+
+                        if (!isSelecionado) {
+                            downIcon.classList.remove('fa-regular');
+                            downIcon.classList.add('fa-solid');
+                            contadorNegativo.textContent = parseInt(contadorNegativo.textContent) + 1;
+
+                            if (upIcon.classList.contains('fa-solid')) {
+                                upIcon.classList.remove('fa-solid');
+                                upIcon.classList.add('fa-regular');
+                                contadorPositivo.textContent = parseInt(contadorPositivo.textContent) - 1;
+                            }
+                        } else {
+                            downIcon.classList.remove('fa-solid');
+                            downIcon.classList.add('fa-regular');
+                            contadorNegativo.textContent = parseInt(contadorNegativo.textContent) - 1;
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
