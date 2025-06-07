@@ -33,8 +33,15 @@
                                     <span id="selectedEstablishment">Selecione um estabelecimento</span>
                                 </button>
                                 <ul class="dropdown-menu w-100" aria-labelledby="establishmentDropdown">
-                                    <li th:each="estabelecimento : ${estabelecimentos}"><a class="dropdown-item market" th:data-id="${estabelecimento.getId()}" 
-                                                                                           th:data-name="${estabelecimento.getNome()}" th:text="${estabelecimento.getNome()}"></a></li>
+                                    <li class="px-3 pb-2">
+                                        <input type="text" id="establishmentSearchInput" class="form-control" placeholder="Buscar estabelecimento..." autocomplete="on">
+                                    </li>
+                                    <li th:each="estabelecimento : ${estabelecimentos}">
+                                        <a class="dropdown-item market"
+                                           th:data-id="${estabelecimento.getId()}"
+                                           th:data-name="${estabelecimento.getNome()}"
+                                           th:text="${estabelecimento.getNome()}"></a>
+                                    </li>
                                 </ul>
                             </div>
 
@@ -109,7 +116,7 @@
                     const stars = container.querySelectorAll('.star');
                     const category = container.dataset.category;
 
-                    // Handle click events
+                    //Star click
                     stars.forEach(star => {
                         star.addEventListener('click', function () {
                             const rating = parseInt(this.dataset.index);
@@ -117,7 +124,7 @@
                             updateStars(container, rating);
                         });
 
-                        // Handle hover events
+                        //Star hover
                         star.addEventListener('mouseenter', function () {
                             const rating = parseInt(this.dataset.index);
                             highlightStars(container, rating);
@@ -161,19 +168,43 @@
                 const dropdownItems = document.querySelectorAll('.market');
                 const selectedEstablishment = document.getElementById('selectedEstablishment');
                 let establishmentId = null;
+                const establishmentSearchInput = document.getElementById('establishmentSearchInput');
+                const allDropdownItems = document.querySelectorAll('.dropdown-item.market');
 
                 dropdownItems.forEach(item => {
                     item.addEventListener('click', function (e) {
                         e.preventDefault();
                         const id = this.dataset.id;
-                        const name = this.dataset.name;
                         const text = this.textContent;
 
                         establishmentId = id;
                         selectedEstablishment.textContent = text;
                         selectedEstablishment.style.color = '#000';
+
+                        const dropdownToggle = document.getElementById('establishmentDropdown');
+                        const bootstrapDropdown = bootstrap.Dropdown.getInstance(dropdownToggle);
+                        if (bootstrapDropdown) {
+                            bootstrapDropdown.hide();
+                        }
                     });
                 });
+
+                establishmentSearchInput.addEventListener('keyup', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    allDropdownItems.forEach(item => {
+                        const itemName = item.textContent.toLowerCase();
+                        if (itemName.includes(searchTerm)) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+
+                establishmentSearchInput.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+
 
                 // Submit Button Functionality
                 const submitButton = document.getElementById('submitRating');
@@ -205,20 +236,31 @@
                         variedade: ratings.variedade
                     };
 
-                    // Send data 
+                    // Send data
                     fetch('/avaliacao/cadastrar', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(ratingData)
-                    }).then(response => {
+                    })
+                    .then(response => {
                         if (response.ok) {
                             alert('Avaliação enviada com sucesso!');
+                        } else {
+                            return response.json().then(errorData => {
+                                alert(`Ocorreu um erro ao enviar a avaliação: ${errorData.message || response.statusText}`);
+                            }).catch(() => {
+                                alert('Ocorreu um erro ao enviar a avaliação. Código: ' + response.status);
+                            });
                         }
+                    })
+                    .catch(error => {
+                        alert('Ocorreu um erro de rede. Verifique sua conexão ou o servidor.');
+                    })
+                    .finally(() => {
+                        resetForm();
                     });
-
-                    resetForm();
                 });
 
                 function getCategoryName(category) {
@@ -245,6 +287,12 @@
                     // Reset stars
                     starContainers.forEach(container => {
                         updateStars(container, 0);
+                    });
+
+                    // Reset search input
+                    establishmentSearchInput.value = '';
+                    allDropdownItems.forEach(item => {
+                        item.style.display = 'block';
                     });
                 }
             });

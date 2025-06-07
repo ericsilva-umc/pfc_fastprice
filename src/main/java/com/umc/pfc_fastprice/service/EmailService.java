@@ -14,7 +14,7 @@ public class EmailService {
     public void enviarEmailRedefinicaoSenha(String email, String linkRedefinicao) {
         SimpleMailMessage message = new SimpleMailMessage();
         
-        message.setFrom("pfcfastprice@gmail.com");
+        message.setFrom("email@gmail.com");
         message.setTo(email);
         message.setSubject("Redefinição de senha");
         message.setText("Clique no link abaixo para definir uma nova senha:\n\n"

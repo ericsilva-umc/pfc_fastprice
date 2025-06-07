@@ -202,16 +202,15 @@ h1 {
 }
 
 .modal-body h4 {
-  margin-bottom: 16px;
-}
-
-.modal-body h5 {
-  margin-top: 20px;
-  margin-bottom: 8px;
+  margin-top: 16px;
+  margin-bottom: 2px;
+  font-size: 1.0rem;
 }
 
 .modal-body p {
   margin-bottom: 16px;
+  text-align: justify;
+  font-size: 0.95rem;
 }
 
 .modal-footer {
@@ -226,8 +225,8 @@ h1 {
   padding: 15px 15px;
 }
 /* Termos de uso */
-.terms-text {
-  text-align: center;
+.form-check {
+  text-align: left;
   color: #9c9cab;
   font-size: 14px;
   margin-bottom: 16px;

@@ -389,3 +389,20 @@ header {
   margin: -8px -8px -8px 8px;
   border-radius: 0 8px 8px 0;
 }
+
+.market {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+}
+
+.location-selected {
+    background-color: #168c56;
+    color: white;
+}
+
+.location-selected:hover {
+    background-color: #105535;
+    color: white;
+}
+
+

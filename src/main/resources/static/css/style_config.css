@@ -213,21 +213,8 @@ header {
     color: white;
 }
 
-.btn-cancel {
-    background-color: #657f95;
-    color: white;
-    margin-left: 10px;
-    margin-right: 10px;
-    align-items: center;
-}
-
-.btn-cancel:hover {
-    background-color: #56636f;
-    color: white;
-}
-
 .btn-save {
-    background-color: #49db79;
+    background-color: #ff4700;
     color: white;
     margin-left: 10px;
     margin-right: 10px;
@@ -235,7 +222,7 @@ header {
 }
 
 .btn-save:hover {
-    background-color: #38a877;
+    background-color: #e74200;
     color: white;
 }
 

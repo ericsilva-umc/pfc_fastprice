@@ -22,7 +22,6 @@ body {
 
 /* Header */
 header {
-    position: sticky;
     top: 0;
     display: flex;
     justify-content: flex-start;
@@ -413,4 +412,8 @@ header {
     justify-content: space-between;
     width: 100%;
     max-width: 500px;
+}
+
+.center-text {
+    text-align: center;
 }

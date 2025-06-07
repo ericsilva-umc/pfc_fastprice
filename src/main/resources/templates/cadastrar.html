@@ -5,6 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Fast Price - Cadastro</title>
         <link rel="icon" type="image/png" href="/imgs/cart.png">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
         <link rel="stylesheet" href="/css/style_register.css">
     </head>
 
@@ -30,9 +34,12 @@
                     </div>
 
                     <!--Ao clicar exibe a modal com os termos de uso-->
-                    <div class="terms-text">
-                        Ao se cadastrar, você concorda com nossos
-                        <a class="terms-link" id="termsLink">Termos de Uso</a>.
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" required>
+                        <label class="form-check-label" for="flexCheckDefault">
+                          Eu aceito os
+                          <a class="terms-link" id="termsLink">Termos de Uso</a> do site.
+                        </label>
                     </div>
 
                     <input type="submit" value="Cadastrar" class="btn btn-primary">
@@ -55,30 +62,31 @@
                     <h4>Termos e Condições de Uso - FastPrice</h4>
                     <p>Última atualização: Abril 2025</p>
 
-                    <h5>1. Aceitação dos Termos</h5>
+                    <h4>1. Aceitação dos Termos</h4>
                     <p>Ao acessar e utilizar o serviço FastPrice, você concorda em cumprir e estar vinculado aos seguintes
                         termos e condições de uso. Se você não concordar com qualquer parte destes termos, não poderá
                         acessar ou utilizar nosso serviço.</p>
 
-                    <h5>2. Descrição do Serviço</h5>
-                    <p>O FastPrice é uma plataforma que permite aos usuários comparar preços de produtos e serviços. Nosso
-                        objetivo é fornecer informações precisas e atualizadas, mas não garantimos a exatidão, integridade
-                        ou atualidade das informações disponibilizadas.</p>
+                    <h4>2. Descrição do Serviço</h4>
+                    <p>O FastPrice é uma plataforma que permite aos usuários comparar preços de produtos, visualizar localização de 
+                        estabelecimento e outros serviços. Nosso objetivo é fornecer informações precisas, mas não garantimos a 
+                        exatidão, integridade ou atualidade das informações disponibilizadas.</p>
 
-                    <h5>3. Cadastro e Conta</h5>
+                    <h4>3. Cadastro e Conta</h4>
                     <p>Para utilizar determinadas funcionalidades do FastPrice, você precisará criar uma conta. Você é
                         responsável por manter a confidencialidade de suas credenciais de login e por todas as atividades
                         que ocorrerem em sua conta.</p>
 
-                    <h5>4. Privacidade</h5>
-                    <p>Nossa Política de Privacidade descreve como coletamos, usamos e compartilhamos suas informações
-                        pessoais. Ao utilizar nosso serviço, você concorda com nossa coleta e uso de informações de acordo
-                        com nossa Política de Privacidade.</p>
-
-                    <h5>5. Propriedade Intelectual</h5>
-                    <p>Todo o conteúdo, recursos e funcionalidades disponíveis no FastPrice são de propriedade da empresa ou
-                        de seus licenciadores e são protegidos por leis de direitos autorais, marcas registradas e outras
+                    <h4>4. Propriedade Intelectual</h4>
+                    <p>Todo o conteúdo, recursos e funcionalidades disponíveis no FastPrice são de propriedade de seus 
+                        idealizadores  e são protegidos por leis de direitos autorais e outras
                         leis de propriedade intelectual.</p>
+                    
+                    <h4>5. Lei Geral de Proteção de Dados (LGPD)</h4>
+                    <p>O FastPrice se compromete a tratar as informações de seus usuários em conformidade com a Lei Geral 
+                        de Proteção de Dados (Lei nº 13.709/2018). Todos os dados cadastrados são unicamente para aprimorar a 
+                        sua experiência dentro do site. Garantimos que seus dados serão armazenados de forma segura e 
+                        utilizados apenas para as finalidades para as quais foram coletados, com total transparência e respeito à sua privacidade.</p>        
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary modal-close">Fechar</button>

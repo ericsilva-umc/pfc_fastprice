@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -31,7 +32,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -141,6 +141,7 @@ public class PaginasController {
         List<Avaliacao> avaliacoes = avaliacaoService.listarAvaliacoes();
         List<AvaliacaoDTO> avaliacoesDTO = new ArrayList<>();
         List<Sugestao> sugestoes = sugestaoService.listarSugestoes();
+        List<Integer> dashboard = Arrays.asList(usuarios.size(), estabelecimentos.size(), ofertas.size(), avaliacoes.size(), sugestoes.size());
 
         for (RegistroDeOferta oferta : ofertas) {
             Usuario usuario = usuarioService.buscarUsuario(oferta.getUsuarioId());
@@ -175,6 +176,7 @@ public class PaginasController {
         model.addAttribute("ofertas", ofertasDTO);
         model.addAttribute("avaliacoes", avaliacoesDTO);
         model.addAttribute("sugestoes", sugestoes);
+        model.addAttribute("dashboard", dashboard);
         model.addAttribute("apiGoogleMaps", apiGoogleMaps); // Define a chave API para o uso do Google Maps
         return "admin-painel";
     }
